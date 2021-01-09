@@ -13,5 +13,6 @@
         <item name="android:statusBarColor" tools:targetApi="l">@color/dark_yellow</item>
         <item name="android:windowLightStatusBar">true</item> <!--min Sdk 21로 잡으면, statusBarColor가 노란색일 때 textColor가 검은색으로 바뀌지 않아 min Sdk를 23으로 올려줌-->
         <!-- Customize your theme here. -->
+        <item name="android:colorEdgeEffect">@color/very_dark_yellow</item>
     </style>
 </resources>

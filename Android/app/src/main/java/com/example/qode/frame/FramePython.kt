@@ -22,7 +22,7 @@ class FramePython : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_c, container, false)
-        view.findViewById<TextView>(R.id.textview).text = "Python Lang"
+        //view.findViewById<TextView>(R.id.textview).text = "Python Lang"
         return view
     }
 

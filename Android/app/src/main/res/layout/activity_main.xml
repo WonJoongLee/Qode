@@ -14,17 +14,61 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@+id/tabLinearLayout"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tabIndicatorColor="@color/crimson_red"
+                app:tabSelectedTextColor="@color/crimson_red"
+                app:tabTextColor="@color/light_gray" />
+
+            <LinearLayout
+                android:id="@+id/tabLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tabLayout">
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            app:hideOnScroll="true"
+            android:backgroundTint="@color/dark_yellow"
+            app:fabAlignmentMode="end">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
                 <ImageButton
+                    android:id="@+id/hamburgerImageButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@color/transparent"
@@ -38,50 +82,17 @@
 
         </com.google.android.material.bottomappbar.BottomAppBar>
 
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_yellow"
+            android:backgroundTint="@color/yellow"
             android:src="@drawable/pencil"
             android:tint="@color/black"
             app:borderWidth="0dp"
-            app:layout_anchor="@id/bottomAppBar" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabIndicatorColor="@color/crimson_red"
-                app:tabSelectedTextColor="@color/crimson_red"
-                app:tabTextColor="@color/light_gray"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/tabLayout"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <!--
-        <androidx.viewpager2.widget.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_gravity="center"/>
-            -->
+            app:layout_anchor="@id/bottomAppBar"
+            />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
