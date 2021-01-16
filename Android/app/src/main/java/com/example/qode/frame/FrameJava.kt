@@ -1,6 +1,8 @@
 package com.example.qode.frame
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.RecoverySystem
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qode.R
 import com.example.qode.fragment.BaseFragment
 import com.example.qode.recyclerview.QuestionTitleAdapter
@@ -31,6 +34,16 @@ class FrameJava : BaseFragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.javaRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
         val adapter = QuestionTitleAdapter(view.context)
+
+        val mSwipeRefreshLayout : SwipeRefreshLayout = view.findViewById(R.id.javaSwipeLayout)
+        mSwipeRefreshLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mSwipeRefreshLayout.isRefreshing = false
+                }, 1500) // 1.5초 후 새로고침 멈추는 코드
+
+            }
+        })
 
         mDatas.add(ShowQuestionData("Java의 어원이 뭔가요?", "어원이 궁금한데 아시는 분?"))
         mDatas.add(ShowQuestionData("Java를 잘 잡는 법", "1. 열심히 공부한다. 2. 열심히 공부한다."))

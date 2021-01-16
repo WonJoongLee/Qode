@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="activity"
             type="com.example.qode.MainActivity" />
@@ -143,6 +142,8 @@
             android:tint="@color/black"
             app:borderWidth="0dp"
             app:layout_anchor="@id/bottomAppBar" />
+
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

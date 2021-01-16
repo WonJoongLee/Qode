@@ -1,6 +1,8 @@
 package com.example.qode.frame
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qode.R
 import com.example.qode.fragment.BaseFragment
 import com.example.qode.recyclerview.QuestionTitleAdapter
@@ -30,6 +33,16 @@ class FramePython : BaseFragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.pythonRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
         val adapter = QuestionTitleAdapter(view.context)
+
+        val mSwipeRefreshLayout : SwipeRefreshLayout = view.findViewById(R.id.pythonSwipeLayout)
+        mSwipeRefreshLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mSwipeRefreshLayout.isRefreshing = false
+                }, 1500) // 1.5초 후 새로고침 멈추는 코드
+
+            }
+        })
 
         mDatas.add(ShowQuestionData("Python은 쉽나요?", "제일 쉽다고 들었는데"))
         mDatas.add(ShowQuestionData("print와 printf의 차이가 뭔가요", "궁금합니다."))

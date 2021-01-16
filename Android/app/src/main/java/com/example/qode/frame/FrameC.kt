@@ -2,6 +2,8 @@ package com.example.qode.frame
 
 import android.graphics.Insets.add
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qode.R
 import com.example.qode.databinding.FragmentCBinding
 import com.example.qode.fragment.BaseFragment
@@ -39,6 +42,16 @@ class FrameC : BaseFragment() {
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL ,false)
 
         val adapter = QuestionTitleAdapter(view.context)
+
+        val mSwipeRefreshLayout : SwipeRefreshLayout = view.findViewById(R.id.cSwipeLayout)
+        mSwipeRefreshLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    mSwipeRefreshLayout.isRefreshing = false
+                }, 1500) // 1.5초 후 새로고침 멈추는 코드
+
+            }
+        })
 
         //데이터 추가하는 부분, 추후에 DB랑 연결되면 이 부분 수정
         mDatas.add(ShowQuestionData("printf와 Cout의 차이?", "printf와 Cout의 차이가 궁금합니다."))

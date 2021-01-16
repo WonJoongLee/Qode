@@ -6,13 +6,18 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.animation.addListener
 import androidx.databinding.DataBindingUtil
 import com.example.qode.databinding.ActivityMainBinding
 import com.example.qode.fragment.SamplePagerAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import kotlin.math.hypot
 
@@ -21,35 +26,49 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var isFabOpen = false
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         val adapter2 = SamplePagerAdapter(supportFragmentManager)
+        var bottomSheetDialog : BottomSheetDialog
+
         binding.pager.adapter = adapter2
         binding.tabLayout.setupWithViewPager(binding.pager)
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab?) { // Tab이 클릭 됐을 때
-                Toast.makeText(this@MainActivity, "Selected ${tab?.text}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MainActivity, "Selected ${tab?.text}", Toast.LENGTH_SHORT).show()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) { // 클릭 해제 됐을 때
-                Toast.makeText(this@MainActivity, "UnSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MainActivity, "UnSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) { // 같은 탭을 다시 클릭 했을 때
-                Toast.makeText(this@MainActivity, "ReSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this@MainActivity, "ReSelected ${tab?.text}", Toast.LENGTH_SHORT).show()
             }
         })
 
+
         binding.fab.setOnClickListener{
             showReveal()
-            Toast.makeText(this, "클릭 감지 완료", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "FAB 클릭 감지 완료", Toast.LENGTH_SHORT).show()
         }
         binding.hamburgerImageButton.setOnClickListener {
-            Toast.makeText(this, "클릭 감지 완료", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "HAMBURGER 클릭 감지 완료", Toast.LENGTH_SHORT).show()
+            bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetTheme)
+            var sheetView : View = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_sheet_layout, findViewById(R.id.bottom_sheet))
+            sheetView.findViewById<LinearLayout>(R.id.share).setOnClickListener{
+                //Toast.makeText(this, "Share CLicked", Toast.LENGTH_SHORT).show()
+                bottomSheetDialog.dismiss()
+            }
+            bottomSheetDialog.setContentView(sheetView)
+            bottomSheetDialog.show()
         }
+
+
     }
 
     private fun showReveal(){
