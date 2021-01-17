@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="activity"
             type="com.example.qode.MainActivity" />
@@ -13,11 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+        <!--
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
@@ -29,6 +27,118 @@
                 app:tabIndicatorColor="@color/crimson_red"
                 app:tabSelectedTextColor="@color/crimson_red"
                 app:tabTextColor="@color/light_gray" />
+                -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+
+            <LinearLayout
+                android:id="@+id/scorllLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:weightSum="10">
+
+
+                <HorizontalScrollView
+                    android:id="@+id/tagScroll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="9"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="10dp">
+
+                        <Button
+                            android:id="@+id/cLangButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="C"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+
+                        <Button
+                            android:id="@+id/javaLangButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="JAVA"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+                        <Button
+                            android:id="@+id/pythonLangButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="PYTHON"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+
+                        <Button
+                            android:id="@+id/etcButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="ETC"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+
+                        <Button
+                            android:id="@+id/temp1Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="TEMP"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+                        <Button
+                            android:id="@+id/temp2Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="TEMP"
+                            android:textColor="@color/black"
+                            android:background="@drawable/button_language_background"
+                            app:backgroundTint="@null"
+                            />
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <ImageButton
+                    android:id="@+id/refreshButton"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_baseline_refresh_24"
+                    android:background="@color/transparent"/>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/tabLinearLayout"
@@ -37,13 +147,30 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tabLayout">
+                app:layout_constraintTop_toBottomOf="@id/scorllLinearLayout">
 
+                <!--
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center" />
+                    -->
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/cSwipeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/cRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </LinearLayout>
 
@@ -54,53 +181,58 @@
             android:id="@+id/layoutContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:visibility="invisible"
             android:background="@color/white"
-            >
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
             <LinearLayout
                 android:id="@+id/topLayout"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
+                android:weightSum="7"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:weightSum="7"
-                android:gravity="center_vertical">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
                     android:id="@+id/etTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="5.8"
                     android:hint="제목"
-                    android:textColorHint="@color/black"
-                    android:layout_weight="6"/>
+                    android:textColorHint="@color/black" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/sendButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_baseline_east_24"
-                    android:background="@color/dark_yellow"
                     android:layout_marginHorizontal="15dp"
+                    android:layout_marginVertical="15dp"
+                    android:layout_weight="1.2"
+                    android:text="완료"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_done"
+                    app:backgroundTint="@null"
                     />
+
             </LinearLayout>
 
             <EditText
                 android:id="@+id/etContent"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:gravity="top"
                 android:hint="내용"
                 android:textColorHint="@color/black"
-                android:gravity="top"
-                app:layout_constraintTop_toBottomOf="@id/topLayout"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/topLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -142,7 +274,6 @@
             android:tint="@color/black"
             app:borderWidth="0dp"
             app:layout_anchor="@id/bottomAppBar" />
-
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
