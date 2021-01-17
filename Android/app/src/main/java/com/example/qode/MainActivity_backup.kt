@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
+import com.example.qode.databinding.ActivityMainBackupBinding
 import com.example.qode.databinding.ActivityMainBinding
 import com.example.qode.fragment.SamplePagerAdapter
 import com.example.qode.register.LoginActivity
@@ -20,16 +21,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import kotlin.math.hypot
 
-class MainActivity : AppCompatActivity() {
+class MainActivity_backup : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBackupBinding
     private var isFabOpen = false
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_backup)
         val adapter2 = SamplePagerAdapter(supportFragmentManager)
         var bottomSheetDialog : BottomSheetDialog
 

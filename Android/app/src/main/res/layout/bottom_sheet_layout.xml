@@ -6,20 +6,27 @@
     android:id="@+id/bottom_sheet">
 
     <TextView
-
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Have a good day:)"
+        android:layout_height="60dp"
+        android:text="Have a good day :)"
+        android:gravity="center_vertical"
         android:textStyle="bold"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textColor="@color/black"
         android:layout_gravity="center"
         android:layout_marginTop="8dp"/>
 
     <LinearLayout
-        android:id="@+id/share"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="4dp"
+        android:background="@color/white"
+        android:layout_marginHorizontal="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/registerBottomSheetButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -33,12 +40,21 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:text="회원가입"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginHorizontal="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/loginBottomSheetButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -52,45 +68,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="프로필 보기"
-            android:textSize="16sp"/>
+            android:text="로그인"
+            android:textSize="18sp"/>
 
     </LinearLayout>
+
+    <!--
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_east_24"/>
-        <TextView
-            android:layout_marginStart="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="TEMP"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_east_24"/>
-        <TextView
-            android:layout_marginStart="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="TEMP"
-            android:textSize="16sp"/>
-    </LinearLayout>
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginHorizontal="10dp"/>
+-->
 
 </LinearLayout>

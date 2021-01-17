@@ -31,6 +31,17 @@
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <TextView
+            android:id="@+id/uploadDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="20:29 01/17/21"
+            android:textSize="12sp"
+            />
+
+
         <!--날짜 추가-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>

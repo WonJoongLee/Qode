@@ -6,7 +6,7 @@
 
         <variable
             name="activity"
-            type="com.example.qode.splash.SplashScreen" />
+            type="com.example.qode.splash.SplashActivity" />
     </data>
 
 
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="이 것은 두 번째 fragment"
+            android:text="모르는 것이 있을 때는 질문!\n전문가들의 실시간 답변!!"
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold"

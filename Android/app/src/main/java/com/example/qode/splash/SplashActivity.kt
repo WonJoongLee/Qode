@@ -13,7 +13,7 @@ import com.example.qode.databinding.ActivitySplashScreenBindingImpl
 import com.example.qode.fragment.SamplePagerAdapter
 import com.example.qode.preferences.SharedData.Companion.prefs
 
-class SplashScreen : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashScreenBinding
 
@@ -52,6 +52,7 @@ class SplashScreen : AppCompatActivity() {
         }else{
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            this.finish()
         }
 
     }

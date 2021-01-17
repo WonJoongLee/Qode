@@ -6,7 +6,7 @@
 
         <variable
             name="activity"
-            type="com.example.qode.splash.SplashScreen" />
+            type="com.example.qode.splash.SplashActivity" />
     </data>
 
 

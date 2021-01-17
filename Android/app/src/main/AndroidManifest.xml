@@ -11,7 +11,9 @@
         android:theme="@style/Theme.Qode"
         android:name=".preferences.SharedData">
         <activity android:name=".ContentActivity"/>
-        <activity android:name=".splash.SplashScreen">
+        <activity android:name=".register.RegisterActivity"/>
+        <activity android:name=".register.LoginActivity"/>
+        <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
