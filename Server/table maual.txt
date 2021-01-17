@@ -1,0 +1,29 @@
+
+<Comment>	//댓글관련된 것은 일단 구상중
+	private Text comment;	//댓글 내용
+	private Int CommentReco	//좋아요와 싫어요를 모두 signed한 추천수로 통일
+
+※
+- 댓글은 따로 테이블을 작성 예정
+- Board테이블과 User테이블과의 의존성을 줘서 따로 Board의 ID, User의 ID를 저장하지않는 방법 생각중
+
+
+
+<Board>
+	private String(100) bbsTitle;	//게시판 이름
+	private Text bbsContent;	//게시판 내용
+	private bool bbsAvailable;	//삭제되었는지 여부
+	private Unsigned Int bbsViews;	//조회수
+	private Int bbsReco	//추천수
+	private String(20) bbsTag	//태그
+
+※ 게시판 아이디은 User에 의존되도록 설정, 시간 정보는 따로 받고 있음
+
+
+<User>
+	private String(20) userID;
+	private String(20) userPassword;
+	private String(20) userName;
+	private Unsigned Int userScore;
+
+※시간 정보는 따로 받고 있음
