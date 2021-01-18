@@ -33,7 +33,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_how_to_reg_24"/>
+            android:src="@drawable/ic_baseline_how_to_reg_24"
+            android:layout_marginStart="10dp"
+            />
         <TextView
             android:layout_marginStart="30dp"
             android:layout_width="wrap_content"
@@ -62,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_account_circle_24"
+            android:layout_marginStart="10dp"
             />
         <TextView
             android:layout_marginStart="30dp"
@@ -69,6 +72,36 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:text="로그인"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginHorizontal="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/searchBottomSheetButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_search_24"
+            android:layout_marginStart="10dp"
+            />
+        <TextView
+            android:layout_marginStart="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="검색"
             android:textSize="18sp"/>
 
     </LinearLayout>

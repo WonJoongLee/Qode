@@ -189,21 +189,24 @@
             <LinearLayout
                 android:id="@+id/topLayout"
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_height="70dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:weightSum="7"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                >
 
                 <EditText
                     android:id="@+id/etTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5.8"
-                    android:hint="제목"
-                    android:textColorHint="@color/black" />
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginStart="10dp"
+                    android:hint=" 제목"
+                    android:textColorHint="@color/gray" />
 
                 <Button
                     android:id="@+id/sendButton"
@@ -227,8 +230,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:gravity="top"
-                android:hint="내용"
-                android:textColorHint="@color/black"
+                android:hint=" 내용"
+                android:textColorHint="@color/gray"
+                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

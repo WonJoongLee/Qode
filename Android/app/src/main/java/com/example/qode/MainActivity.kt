@@ -64,13 +64,16 @@ class MainActivity : AppCompatActivity() {
         mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
         mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
         mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
+        mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
+        mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
+        mDatas.add(ShowQuestionData("C언어가 어렵나요?", "코딩 입문자인데 C언어가 어려운지 궁금해요!"))
 
         adapter.data = mDatas // 데이터를 삽입
         adapter.notifyDataSetChanged()
         recyclerView.adapter = adapter
 
         binding.refreshButton.setOnClickListener {
-            binding.refreshButton.animate().rotation(binding.refreshButton.rotation+720).start() // 버튼 클릭 시, 두 번 회전해서 새로고침 했다는 것을 알려준다.
+            binding.refreshButton.animate().rotation(binding.refreshButton.rotation+720).setDuration(500).start() // 버튼 클릭 시, 0.5초 동안 두 번 회전해서, 새로고침 했다는 것을 알려준다.
         }
 
         binding.cLangButton.setOnClickListener {
@@ -142,11 +145,20 @@ class MainActivity : AppCompatActivity() {
             sheetView.findViewById<LinearLayout>(R.id.registerBottomSheetButton).setOnClickListener{
                 val intent = Intent(this, RegisterActivity::class.java)
                 startActivity(intent)
+                overridePendingTransition(R.anim.slide_x_minus_hundred_to_zero, R.anim.slide_x_zero_to_hundred)
                 bottomSheetDialog.dismiss()
             }
             sheetView.findViewById<LinearLayout>(R.id.loginBottomSheetButton).setOnClickListener{
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
+                //overridePendingTransition(R.anim.slide_x_hundred_to_zero, R.anim.slide_x_zero_to_minus_hundred)
+                overridePendingTransition(R.anim.slide_x_minus_hundred_to_zero, R.anim.slide_x_zero_to_hundred)
+                bottomSheetDialog.dismiss()
+            }
+            sheetView.findViewById<LinearLayout>(R.id.searchBottomSheetButton).setOnClickListener {
+                val intent = Intent(this, SearchActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_down)
                 bottomSheetDialog.dismiss()
             }
             bottomSheetDialog.setContentView(sheetView)

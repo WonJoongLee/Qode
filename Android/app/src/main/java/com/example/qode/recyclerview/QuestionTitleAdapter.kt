@@ -33,7 +33,6 @@ class QuestionTitleAdapter(private val context : Context) :
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(holder.itemView.context, intent, null)
         }
-
     }
 }
 
@@ -48,6 +47,4 @@ class QuestionTitleViewHolder(itemView : View) : RecyclerView.ViewHolder(itemVie
             Toast.makeText(it.context, "Title is $tvTitle", Toast.LENGTH_SHORT).show()
         }
     }
-
-
 }
