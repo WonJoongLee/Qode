@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = class User extends Sequelize.Model{
+module.exports = class Comment extends Sequelize.Model{
     static init(sequelize){
         return super.init({
             userID: {
@@ -8,18 +8,13 @@ module.exports = class User extends Sequelize.Model{
                 allowNull: false,
                 unique: true,
             },
-            userPassword: {
-                type: Sequelize.STRING(20),
+            commentContent: {
+                type: Sequelize.TEXT,
                 allowNull: false,
             },
-            userName:{
-                type: Sequelize.STRING(20),
+            commentReco:{
+                type: Sequelize.INTEGER,
                 allowNull: false,
-                unique: true,
-            },
-            userScore:{
-                type: Sequelize.INTEGER.UNSIGNED,
-                allowNull: true,
             },
             created_at: {
                 type: Sequelize.DATE,
@@ -31,17 +26,15 @@ module.exports = class User extends Sequelize.Model{
             timestamps: false,
             underscored: false,
             paranoid: false,     
-            modelName: 'User',
-            tableName: 'users',
+            modelName: 'comment',
+            tableName: 'comments',
             charset: 'utf8',
             collate: 'utf8_general_ci',
        });    
     
     }
 
-    
     static associate(db) {
-        db.User.hasMany(db.Board, { foreignKey: 'boarder', sourceKey: 'id' });
+        db.Comment.belongsTo(db.Board, {foreginKey: 'commenter', targetKey: 'id'});
       }
-
 }

@@ -23,10 +23,6 @@ module.exports = class Board extends Sequelize.Model{
                 type: Sequelize.INTEGER,
                 allowNull: true,
             },
-            bbsComments:{       //댓글관련된 것, 나중에 더 자세히 작성예정
-                type: Sequelize.INTEGER.UNSIGNED,
-                allowNull: true,
-            },
             bbsTag:{
                 type: Sequelize.STRING(20),
                 allowNull: true,
@@ -48,3 +44,10 @@ module.exports = class Board extends Sequelize.Model{
        });    
     
     }
+
+    
+    static associate(db) {
+        db.Board.hasMany(db.Comment, { foreignKey: 'commenter', sourceKey: 'id' });
+        db.Board.belongsTo(db.User, {foreginKey: 'boarder', targetKey: 'id'});
+      }
+}
