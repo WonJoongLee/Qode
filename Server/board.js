@@ -23,7 +23,15 @@ module.exports = class Board extends Sequelize.Model{
                 type: Sequelize.INTEGER,
                 allowNull: true,
             },
-            bbsTag:{
+            bbsTag1:{
+                type: Sequelize.STRING(20),
+                allowNull: true,
+            },            
+            bbsTag2:{
+                type: Sequelize.STRING(20),
+                allowNull: true,
+            },
+            bbsTag3:{
                 type: Sequelize.STRING(20),
                 allowNull: true,
             },
