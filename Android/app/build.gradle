@@ -52,4 +52,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.google.android.material:material:1.2.1' // 좀 더 나은 디자인을 위한 material
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'com.android.volley:volley:1.1.0' // node와 통신 위한 것
 }

@@ -10,11 +10,14 @@ import androidx.databinding.DataBindingUtil
 import com.example.qode.MainActivity
 import com.example.qode.R
 import com.example.qode.databinding.ActivityLoginBinding
+import org.json.JSONException
+import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private var pwClicked : Boolean = false
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,4 +50,6 @@ class LoginActivity : AppCompatActivity() {
         super.onBackPressed()
         overridePendingTransition(R.anim.slide_x_hundred_to_zero, R.anim.slide_x_zero_to_minus_hundred)
     }
+
+
 }

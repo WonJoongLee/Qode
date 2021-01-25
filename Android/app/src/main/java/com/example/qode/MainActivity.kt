@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var isFabOpen = false
 
-
-
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,6 +159,12 @@ class MainActivity : AppCompatActivity() {
                 overridePendingTransition(R.anim.slide_up, R.anim.slide_down)
                 bottomSheetDialog.dismiss()
             }
+            sheetView.findViewById<LinearLayout>(R.id.myProfileButton).setOnClickListener {
+                val intent = Intent(this, MyProfileActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_x_minus_hundred_to_zero, R.anim.slide_x_zero_to_hundred)
+                bottomSheetDialog.dismiss()
+            }
             bottomSheetDialog.setContentView(sheetView)
             bottomSheetDialog.show()
         }
@@ -172,11 +176,6 @@ class MainActivity : AppCompatActivity() {
         var centerY = binding.fab.y + binding.fab.height / 2 // 애니메이션 중심 y좌표 지정
         //target view 지정
         var radius = hypot(binding.layoutContent.width.toDouble(), binding.layoutContent.height.toDouble())
-
-        //Log.e("e", binding.bottomAppBar.hideOnScroll.toString())
-
-
-        //binding.fab.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#009688"))
 
         if(isFabOpen) {
             Log.e("FAB", "Fab Status : $isFabOpen")
