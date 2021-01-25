@@ -1,6 +1,7 @@
 
-<Comment>	//댓글관련된 것은 일단 구상중
-	private Text comment;	//댓글 내용
+<Comment>
+	private String(20) userID	
+	private Text commentContent;	//댓글 내용
 	private Int CommentReco	//좋아요와 싫어요를 모두 signed한 추천수로 통일
 
 ※
