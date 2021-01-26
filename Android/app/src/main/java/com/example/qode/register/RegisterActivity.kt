@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -74,11 +75,12 @@ class RegisterActivity : AppCompatActivity() {
                 binding.pwCheckET.text.isEmpty() -> {
                     Toast.makeText(this, "비밀번호를 한 번 더 입력해 주세요.", Toast.LENGTH_SHORT).show()
                 }
-                binding.pwET.text != binding.pwCheckET.text -> {
+                binding.pwET.text.toString() != binding.pwCheckET.text.toString() -> {
+                    Log.e("text", "pwET : ${binding.pwET.text}, pwCheckEt : ${binding.pwCheckET.text}")
                     Toast.makeText(this, "비밀번호가 다릅니다.", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    val request = object : StringRequest(Method.POST, "http://33a1d7b3b399.ngrok.io/register/", // url은 매번 바꿔줘야 함.
+                    val request = object : StringRequest(Method.POST, "http://54cf09e2d946.ngrok.io/register/", // url은 매번 바꿔줘야 함.
                         Response.Listener {
                             println("@@@성공")
                         },
