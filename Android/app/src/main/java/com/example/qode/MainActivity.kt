@@ -2,7 +2,9 @@ package com.example.qode
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -13,20 +15,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.qode.databinding.ActivityMainBinding
-import com.example.qode.fragment.SamplePagerAdapter
 import com.example.qode.recyclerview.QuestionTitleAdapter
 import com.example.qode.recyclerview.ShowQuestionData
 import com.example.qode.register.LoginActivity
 import com.example.qode.register.RegisterActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.tabs.TabLayout
 import kotlin.math.hypot
+
+//TODO 회원가입 시 글자 제한 두기
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +48,19 @@ class MainActivity : AppCompatActivity() {
 
         val buttonClicked = mutableMapOf<String, Boolean>() // scroll view의 버튼이 클릭 됐는지 확인하기 위한 mutableMap
                                                             // 초기 설정값은 모두 false고, 클릭 된 상태를 true로 본다
+
+
+        val sharedPreferences:SharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+        val editor : SharedPreferences.Editor = sharedPreferences.edit()
+
+        editor.apply{
+            putString("serverUrl", "여기에 serverURL 추가") // server Url 추가
+        }.apply()
+
+        var serverString = sharedPreferences.getString("serverUrl", null)
+        println("@@@ serverString = $serverString")
+
+
         buttonClicked["C"] = false
         buttonClicked["JAVA"] = false
         buttonClicked["PYTHON"] = false
@@ -129,17 +145,19 @@ class MainActivity : AppCompatActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     mSwipeRefreshLayout.isRefreshing = false
                 }, 1500) // 1.5초 후 새로고침 멈추는 코드
-
             }
         })
-
 
         binding.fab.setOnClickListener{
             showReveal()
         }
+
+        val sheetView : View = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_sheet_layout, findViewById(R.id.bottom_sheet), false)
+        Log.d("Login Data", "${sharedPreferences.getBoolean("isLogin", false)}") //
+        setBottomSheetVisibility(sharedPreferences, sheetView)
+
         binding.hamburgerImageButton.setOnClickListener {
             bottomSheetDialog = BottomSheetDialog(this, R.style.BottomSheetTheme)
-            var sheetView : View = LayoutInflater.from(applicationContext).inflate(R.layout.bottom_sheet_layout, findViewById(R.id.bottom_sheet))
             sheetView.findViewById<LinearLayout>(R.id.registerBottomSheetButton).setOnClickListener{
                 val intent = Intent(this, RegisterActivity::class.java)
                 startActivity(intent)
@@ -149,7 +167,6 @@ class MainActivity : AppCompatActivity() {
             sheetView.findViewById<LinearLayout>(R.id.loginBottomSheetButton).setOnClickListener{
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
-                //overridePendingTransition(R.anim.slide_x_hundred_to_zero, R.anim.slide_x_zero_to_minus_hundred)
                 overridePendingTransition(R.anim.slide_x_minus_hundred_to_zero, R.anim.slide_x_zero_to_hundred)
                 bottomSheetDialog.dismiss()
             }
@@ -165,17 +182,55 @@ class MainActivity : AppCompatActivity() {
                 overridePendingTransition(R.anim.slide_x_minus_hundred_to_zero, R.anim.slide_x_zero_to_hundred)
                 bottomSheetDialog.dismiss()
             }
+            sheetView.findViewById<LinearLayout>(R.id.logoutButton).setOnClickListener {//TODO 로그아웃 서버와 연결
+                editor.apply {
+                    putBoolean("isLogin", false)//로그아웃했으므로 isLogin Boolean으로 처리
+                }.apply()
+                Log.d("Login Data", "${sharedPreferences.getBoolean("isLogin", true)}")
+                setBottomSheetVisibility(sharedPreferences, sheetView) // 로그아웃을 하면 Bottom Sheet View에서 보여지는 값들 변경하기
+                bottomSheetDialog.dismiss()
+            }
+            if(sheetView.parent!=null){
+                (sheetView.parent as ViewGroup).removeAllViews()
+            }
             bottomSheetDialog.setContentView(sheetView)
             bottomSheetDialog.show()
         }
-
     }
 
+    //TODO private suspend fun serverLogout() = suspendCoroutine<> {  }
+
+    private fun setBottomSheetVisibility(sharedPreferences : SharedPreferences, sheetView : View){
+        if(!sharedPreferences.getBoolean("isLogin", false)){ // 만약 로그인이 되어 있지 않은 상황이라면,
+                                                             // Default는 false다. 왜냐하면 처음에는 로그인 된 상황이 아니므로
+            sheetView.findViewById<LinearLayout>(R.id.logoutButton).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.myProfileBottomLinearLayout).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.myProfileButton).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.searchBottomLinearLayout).visibility = View.GONE
+
+            sheetView.findViewById<LinearLayout>(R.id.loginBottomSheetButton).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.loginBottomLinearLayout).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.registerBottomSheetButton).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.registerBottomLinearLayout).visibility = View.VISIBLE
+        }else{ // 로그인이 되어 있는 상황이라면,
+            sheetView.findViewById<LinearLayout>(R.id.logoutButton).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.myProfileBottomLinearLayout).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.myProfileButton).visibility = View.VISIBLE
+            sheetView.findViewById<LinearLayout>(R.id.searchBottomLinearLayout).visibility = View.VISIBLE
+
+            sheetView.findViewById<LinearLayout>(R.id.loginBottomSheetButton).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.loginBottomLinearLayout).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.registerBottomSheetButton).visibility = View.GONE
+            sheetView.findViewById<LinearLayout>(R.id.registerBottomLinearLayout).visibility = View.GONE
+        }
+    }
+
+
     private fun showReveal(){
-        var centerX = binding.fab.x + binding.fab.width / 2 // 애니메이션 중심 x좌표 지정
-        var centerY = binding.fab.y + binding.fab.height / 2 // 애니메이션 중심 y좌표 지정
+        val centerX = binding.fab.x + binding.fab.width / 2 // 애니메이션 중심 x좌표 지정
+        val centerY = binding.fab.y + binding.fab.height / 2 // 애니메이션 중심 y좌표 지정
         //target view 지정
-        var radius = hypot(binding.layoutContent.width.toDouble(), binding.layoutContent.height.toDouble())
+        val radius = hypot(binding.layoutContent.width.toDouble(), binding.layoutContent.height.toDouble())
 
         if(isFabOpen) {
             Log.e("FAB", "Fab Status : $isFabOpen")

@@ -47,10 +47,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/registerBottomLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/white"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/loginBottomSheetButton"
@@ -77,10 +79,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/loginBottomLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/white"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/searchBottomSheetButton"
@@ -107,10 +111,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/searchBottomLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/white"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/myProfileButton"
@@ -137,10 +143,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/myProfileBottomLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/white"
-        android:layout_marginHorizontal="10dp"/>
+        android:layout_marginHorizontal="10dp"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/logoutButton"

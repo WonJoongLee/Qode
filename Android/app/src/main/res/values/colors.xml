@@ -15,6 +15,10 @@
     <color name="very_dark_yellow">#BDB76B</color>
     <color name="gray">#80808080</color>
     <color name="light_gray2">#A9A9A9</color>
+    <color name="dark_dim_gray">#696969</color>
+    <color name="light_yellow">#FFFFE0</color>
+    <color name="khaki">#F0E68C</color>
+
 
 
 </resources>

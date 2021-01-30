@@ -13,13 +13,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
+        android:background="@color/khaki">
 
         <ImageView
             android:id="@+id/qodeIV"
             android:layout_width="350dp"
             android:layout_height="100dp"
-            android:src="@drawable/qode_yellow"
+            android:src="@drawable/qode_black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -42,7 +42,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="2"
                 android:text="아이디"
-                android:textColor="@color/dark_yellow"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <EditText
@@ -52,10 +52,11 @@
                 android:autofillHints="아이디"
                 android:hint="아이디"
                 android:inputType="text"
-                android:textColor="@color/dark_yellow"
-                android:textColorHint="@color/very_dark_yellow"
+                android:textColor="@color/black"
+                android:textColorHint="@color/dark_dim_gray"
                 android:textSize="25sp"
-                tools:ignore="TextFields" />
+                tools:ignore="TextFields"
+                />
 
         </LinearLayout>
 
@@ -75,7 +76,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="2"
                 android:text="비밀번호"
-                android:textColor="@color/dark_yellow"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
 
@@ -91,8 +92,8 @@
                     android:autofillHints="password"
                     android:hint="비밀번호"
                     android:inputType="textPassword"
-                    android:textColor="@color/dark_yellow"
-                    android:textColorHint="@color/very_dark_yellow"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/dark_dim_gray"
                     android:textSize="25sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -106,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/ic_baseline_visibility_24"
+                    android:src="@drawable/ic_baseline_visibility_24_gray"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -119,9 +120,9 @@
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/dark_yellow"
-            android:text="회원가입"
-            android:textColor="@color/black"
+            android:backgroundTint="@color/black"
+            android:text="로그인"
+            android:textColor="@color/khaki"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
