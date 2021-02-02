@@ -75,7 +75,7 @@ class RegisterActivity : AppCompatActivity() {
         //회원가입을 클릭했을 때
         binding.registerButton.setOnClickListener {
             when {
-                binding.nameET.text.isEmpty() -> {
+                binding.nicknameET.text.isEmpty() -> {
                     Toast.makeText(this, "이름을을 입력해 주세요.",Toast.LENGTH_SHORT).show()
                 }
                 binding.idET.text.isEmpty() -> {
@@ -127,7 +127,7 @@ class RegisterActivity : AppCompatActivity() {
     private suspend fun duplicationCheck(serverString : String?) = suspendCoroutine<Boolean> {
         Handler(Looper.getMainLooper()).postDelayed({
             var idDuplicated = false // false면 중복이 없음, true면 중복이 있음
-            val request = object : StringRequest(Method.POST, "${serverString}/auth/join/", // url은 매번 바꿔줘야 함.
+            val request = object : StringRequest(Method.POST, "${serverString}auth/join/", // url은 매번 바꿔줘야 함.
                 Response.Listener {response ->
                     /**
                     json_register_test_member.php 에 회원가입관련 정보를 POST방식으로 보내면 그 응답결과를
@@ -153,7 +153,7 @@ class RegisterActivity : AppCompatActivity() {
                     val params : MutableMap<String, String> = HashMap()
                     params["userID"] = binding.idET.text.toString()
                     params["userPassword"] = binding.pwET.text.toString()
-                    params["userName"] = binding.nameET.text.toString()
+                    params["userName"] = binding.nicknameET.text.toString() // userName이 아니라 usernickName
                     return params
                 }
             }
@@ -162,4 +162,6 @@ class RegisterActivity : AppCompatActivity() {
 
         }, 500)
     }
+
+
 }

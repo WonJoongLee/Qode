@@ -49,7 +49,7 @@
             <TextView
                 android:layout_width="105dp"
                 android:layout_height="wrap_content"
-                android:text="이름"
+                android:text="아이디"
                 android:textSize="20sp"
                 android:textColor="@color/black" />
 
@@ -62,10 +62,11 @@
 
             <TextView
                 android:id="@+id/profileNameTV"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Default Name"
+                android:text="Default Nickname"
                 android:textSize="20sp"
                 android:textColor="@color/black"/>
 

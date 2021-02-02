@@ -57,29 +57,28 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.loginButton.setOnClickListener {
-            val request = object : StringRequest(
-                Method.POST, "$serverString/auth/login/",
-                Response.Listener { response ->
-                    var jsonObject:JSONObject = JSONObject(response)
-                    var state:String = jsonObject.getString("state")//성공적으로 처리 되었는지 확인하는 string
-                    Log.d("Connection", state)
-                },
-                Response.ErrorListener { error ->
-                    Log.e("Connection", "Error : $error")
-                }){
-                override fun getParams(): Map<String, String> {
-                    val params : MutableMap<String, String> = HashMap()
-                    params["userID"] = binding.idET.text.toString()
-                    params["userPassword"] = binding.pwET.text.toString()
-                    return params
-                }
-            }
-            val queue = Volley.newRequestQueue(this)
-            queue.add(request)
+//            val request = object : StringRequest(
+//                Method.POST, "${serverString}login/",
+//                Response.Listener { response ->
+//                    var jsonObject:JSONObject = JSONObject(response)
+//                    var state:String = jsonObject.getString("state")//성공적으로 처리 되었는지 확인하는 string
+//                    Log.d("Connection", state)
+//                },
+//                Response.ErrorListener { error ->
+//                    Log.e("Connection", "Error : $error")
+//                }){
+//                override fun getParams(): Map<String, String> {
+//                    val params : MutableMap<String, String> = HashMap()
+//                    params["userID"] = binding.idET.text.toString()
+//                    params["userPassword"] = binding.pwET.text.toString()
+//                    return params
+//                }
+//            }
+//            val queue = Volley.newRequestQueue(this)
+//            queue.add(request)
 
             GlobalScope.launch{
-                val loginCallback = loginCheck()
-                when(loginCallback){
+                when(loginCheck(serverString!!)){
                     "passwordUncorrect" -> {
                         runOnUiThread{
                             Toast.makeText(applicationContext, "비밀번호를 다시 확인해주세요", Toast.LENGTH_SHORT).show()
@@ -111,15 +110,17 @@ class LoginActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.slide_x_hundred_to_zero, R.anim.slide_x_zero_to_minus_hundred)
     }
 
-    private suspend fun loginCheck() = suspendCoroutine<String> {
+    private suspend fun loginCheck(serverString : String) = suspendCoroutine<String> {
         Handler(Looper.getMainLooper()).postDelayed({
             val request = object : StringRequest(
-                Method.POST, "http://d70d3e7281db.ngrok.io/auth/login/", // url은 매번 바꿔줘야 함.
+                Method.POST, "${serverString}auth/login/", // url은 매번 바꿔줘야 함.
                 Response.Listener { response ->
                     val jsonObject = JSONObject(response)
                     val state:String = jsonObject.getString("state")//성공적으로 처리 되었는지 확인하는 string
+                    val nickName : String = jsonObject.getString("nickName")
                     it.resume(state) // 서버로부터 받은 state를 그대로 넘겨준다.
                     Log.d("Connection", state)
+                    Log.d("Nickname", nickName)
                 },
                 Response.ErrorListener { error ->
                     Log.e("Connection", "Error : $error")
