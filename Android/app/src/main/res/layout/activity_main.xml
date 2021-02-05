@@ -31,28 +31,26 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
 
             <LinearLayout
                 android:id="@+id/scorllLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:weightSum="10"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:weightSum="10">
+                app:layout_constraintTop_toTopOf="parent">
 
 
                 <HorizontalScrollView
                     android:id="@+id/tagScroll"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_weight="9"
-                    >
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -66,76 +64,72 @@
                             android:layout_height="40dp"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="C"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
 
                         <Button
                             android:id="@+id/javaLangButton"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="JAVA"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
+
                         <Button
                             android:id="@+id/pythonLangButton"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="PYTHON"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
 
                         <Button
                             android:id="@+id/etcButton"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="ETC"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
 
                         <Button
                             android:id="@+id/temp1Button"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="TEMP"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
+
                         <Button
                             android:id="@+id/temp2Button"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
                             android:text="TEMP"
                             android:textColor="@color/black"
-                            android:background="@drawable/button_language_background"
-                            app:backgroundTint="@null"
-                            />
+                            app:backgroundTint="@null" />
 
                     </LinearLayout>
                 </HorizontalScrollView>
 
                 <ImageButton
                     android:id="@+id/refreshButton"
-                    android:layout_gravity="center_vertical"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_baseline_refresh_24"
-                    android:background="@color/transparent"/>
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_baseline_refresh_24" />
 
             </LinearLayout>
 
@@ -176,15 +170,14 @@
 
             <ProgressBar
                 android:id="@+id/mainProgressbar"
-                android:indeterminateTint="@color/crimson_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:indeterminateTint="@color/crimson_red"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -193,7 +186,7 @@
             android:id="@+id/layoutContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="#fbf3db"
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="invisible">
@@ -207,48 +200,61 @@
                 android:weightSum="7"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                >
+                app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
-                    android:id="@+id/etTitle"
+                    android:id="@+id/postTitle"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="5.8"
+                    android:layout_height="match_parent"
                     android:layout_marginVertical="15dp"
                     android:layout_marginStart="10dp"
+                    android:layout_weight="6"
                     android:hint=" 제목"
                     android:textColorHint="@color/gray" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/sendButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginVertical="15dp"
-                    android:layout_weight="1.2"
-                    android:text="완료"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
+                    android:scaleType="fitCenter"
+                    android:layout_weight="1"
                     android:background="@drawable/button_done"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     app:backgroundTint="@null"
-                    />
+                    android:contentDescription="Done Button" />
 
             </LinearLayout>
 
             <EditText
-                android:id="@+id/etContent"
+                android:id="@+id/postContent"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_margin="10dp"
                 android:gravity="top"
                 android:hint=" 내용"
                 android:textColorHint="@color/gray"
-                android:layout_marginStart="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/autoCompleteTag"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/topLayout" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/autoCompleteTag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="#292826"
+                android:hint="해시태그(#)로 구분해서 입력해주세요"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/postContent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,22 +2,25 @@ package com.example.qode
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.Spannable
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
+import android.widget.MultiAutoCompleteTextView.CommaTokenizer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,12 +37,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
-import org.json.JSONObject
+import java.lang.Exception
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.hypot
 
+
 //TODO 회원가입 시 글자 제한 두기
+//TODO 게시판 댓글 GET, POST
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
         editor.apply {
-            putString("serverUrl", "http://f17fe4b67c71.ngrok.io/") // server Url 추가
+            putString("serverUrl", "http://800628fb7838.ngrok.io/") // server Url 추가
         }.apply()
 
         val serverString = sharedPreferences.getString("serverUrl", null)
@@ -100,6 +105,11 @@ class MainActivity : AppCompatActivity() {
                 bbsSize = jsonArray.length()
                 for (i in 0 until jsonArray.length()) {
                     val j = jsonArray.getJSONObject(i)
+
+//                    if(j.get("bbstTitle").toString().isEmpty()){
+//                        continue
+//                    }
+
                     mDatas.add(
                         ShowQuestionData(
                             j.get("bbsTitle").toString(),
@@ -132,7 +142,7 @@ class MainActivity : AppCompatActivity() {
             adapter.data = mDatas // 데이터를 삽입
             adapter.notifyDataSetChanged()
             binding.mainProgressbar.visibility = View.GONE
-        },1500) // 서버에서 데이터 받아오는 데 시간이 걸리므로 대략 2초 이따가 adapter 연결해서 데이터 보여주는 식으로 함.
+        }, 1500) // 서버에서 데이터 받아오는 데 시간이 걸리므로 대략 2초 이따가 adapter 연결해서 데이터 보여주는 식으로 함.
         recyclerView.adapter = adapter
 
         println("@@@ 2번 : $mDatas")
@@ -202,6 +212,93 @@ class MainActivity : AppCompatActivity() {
 
         binding.fab.setOnClickListener {
             if (sharedPreferences.getBoolean("isLogin", false)) {
+                if (!isFabOpen) { // 게시글 쓰는 창이 지금 화면에 나오고 있는 상태면
+
+//                    field1.addTextChangedListener(object : TextWatcher {
+//                        override fun afterTextChanged(s: Editable) {}
+//                        override fun beforeTextChanged(
+//                            s: CharSequence, start: Int,
+//                            count: Int, after: Int
+//                        ) {
+//                        }
+//
+//                        override fun onTextChanged(
+//                            s: CharSequence, start: Int,
+//                            before: Int, count: Int
+//                        ) {
+//                            if (s.length != 0) field2.setText("")
+//                        }
+//                    })
+
+                    val multiAutoTextStrings = arrayOf(
+                        "#C",
+                        "#C++",
+                        "#Java",
+                        "#Algorithm",
+                        "#Python",
+                        "#Server",
+                        "#Web",
+                        "#Mobile",
+                        "#IOT",
+                        "#ETC"
+                    )
+                    val multiAutoTextAdapter = ArrayAdapter(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        multiAutoTextStrings
+                    )
+                    val multiAutoTextView =
+                        findViewById<MultiAutoCompleteTextView>(R.id.autoCompleteTag)
+
+                    multiAutoTextView.setTokenizer(CommaTokenizer())
+
+                    multiAutoTextView.setAdapter(multiAutoTextAdapter)
+                    multiAutoTextView.threshold = 1 // 한 글자부터 출력될 수 있도록 설정
+
+                    multiAutoTextView.onItemClickListener =
+                        AdapterView.OnItemClickListener { parent, view, position, id ->
+                            var commaCnt = 0
+                            val tempText = multiAutoTextView.text
+                            val changeText: Spannable = tempText
+                            var autoTextinChar = multiAutoTextView.text
+                            for (i in 0 until multiAutoTextView.length()) {
+                                if (autoTextinChar[i] != ' ' && autoTextinChar[i] != ',') { // 색을 넣어주는 부분
+                                    changeText.setSpan(
+                                        BackgroundColorSpan(Color.parseColor("#fbe4e4")),
+                                        i,
+                                        i + 1,
+                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                    ) // 1~4는 인덱스. 한글도 한 자로 친다.
+                                }
+                                if (autoTextinChar[i] == ',') commaCnt++
+                            }
+                            if (commaCnt == 3) {
+                                multiAutoTextView.setText(multiAutoTextView.text.dropLast(2))
+                                multiAutoTextView.setSelection(multiAutoTextView.length())
+                            }
+                        }
+
+                    binding.sendButton.setOnClickListener {
+                        val request = object : StringRequest(Method.POST, boardServerString,
+                            Response.Listener { response ->
+                                val jsonArray =
+                                    JSONArray(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
+                                bbsSize = jsonArray.length()
+                            }, Response.ErrorListener { error ->
+                                Log.e("ERROR", error.toString())
+                            }) {
+                            override fun getParams(): Map<String, String> {
+                                val params: MutableMap<String, String> = HashMap()
+                                params["bbsTitle"] = binding.postTitle.text.toString()
+                                params["bbsContent"] = binding.postContent.text.toString()
+
+                                return params
+                            }
+                        }
+                        val postQueue = Volley.newRequestQueue(this)
+                        postQueue.add(request)
+                    }
+                }
                 showReveal()
             } else {
                 Toast.makeText(this, "먼저 로그인 해주세요.", Toast.LENGTH_SHORT).show()
