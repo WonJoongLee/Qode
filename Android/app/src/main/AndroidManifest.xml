@@ -21,6 +21,7 @@
         <activity android:name=".register.LoginActivity"/>
         <activity android:name=".SearchActivity"/>
         <activity android:name=".MyProfileActivity"/>
+        <activity android:name=".ContentWithAnswerActivity"/>
         <activity android:name=".splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

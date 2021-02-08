@@ -20,10 +20,10 @@
             android:layout_width="350dp"
             android:layout_height="100dp"
             android:src="@drawable/qode_black"
+            app:layout_constraintBottom_toTopOf="@id/idLinearLayout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/idLinearLayout"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/idLinearLayout"
@@ -55,8 +55,7 @@
                 android:textColor="@color/black"
                 android:textColorHint="@color/dark_dim_gray"
                 android:textSize="25sp"
-                tools:ignore="TextFields"
-                />
+                tools:ignore="TextFields" />
 
         </LinearLayout>
 

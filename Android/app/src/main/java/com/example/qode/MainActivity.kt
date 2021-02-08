@@ -49,7 +49,7 @@ import kotlin.math.hypot
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val mDatas = mutableListOf<ShowQuestionData>()
+    val boardData = mutableListOf<ShowQuestionData>()
     private var isFabOpen = false
     var bbsSize: Int = 0
 
@@ -87,14 +87,14 @@ class MainActivity : AppCompatActivity() {
         buttonClicked["TEMP1"] = false
         buttonClicked["TEMP2"] = false
 
-        println("@@@ 0번 : $mDatas")
+        println("@@@ 0번 : $boardData")
 
         recyclerView.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-        //mDatas.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        //mDatas.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        //mDatas.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        //mDatas.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
 
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(false)
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 //                        continue
 //                    }
 
-                    mDatas.add(
+                    boardData.add(
                         ShowQuestionData(
                             j.get("bbsTitle").toString(),
                             j.get("bbsContent").toString(),
@@ -118,16 +118,16 @@ class MainActivity : AppCompatActivity() {
                             j.get("boarder").toString()
                         )
                     )
-                    //mDatas.addAll()
+                    //boardData.addAll()
                     //이하는 response 확인용 구문들
                     //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
                     //println("content : ${j.get("bbsContent")}, created_at : ${j.get("created_at")}")
                     Log.e("Value", j.toString())
-                    //adapter.data = mDatas // 데이터를 삽입
+                    //adapter.data = boardData // 데이터를 삽입
                 }
-                adapter.data.addAll(mDatas)
+                adapter.data.addAll(boardData)
                 adapter.notifyDataSetChanged()
-                adapter.data = mDatas
+                adapter.data = boardData
                 Log.e("check", "check")
             }, Response.ErrorListener { error ->
                 Log.e("ERROR", "@@@@ + ${error.toString()}")
@@ -135,17 +135,17 @@ class MainActivity : AppCompatActivity() {
         }
         val queue = Volley.newRequestQueue(applicationContext)
         queue.add(request)
-        //adapter.data = mDatas
-        //adapter.data.addAll(mDatas) // 데이터를 삽입
+        //adapter.data = boardData
+        //adapter.data.addAll(boardData) // 데이터를 삽입
 
         Handler(Looper.getMainLooper()).postDelayed({
-            adapter.data = mDatas // 데이터를 삽입
+            adapter.data = boardData // 데이터를 삽입
             adapter.notifyDataSetChanged()
             binding.mainProgressbar.visibility = View.GONE
         }, 1500) // 서버에서 데이터 받아오는 데 시간이 걸리므로 대략 2초 이따가 adapter 연결해서 데이터 보여주는 식으로 함.
         recyclerView.adapter = adapter
 
-        println("@@@ 2번 : $mDatas")
+        println("@@@ 2번 : $boardData")
 
         binding.refreshButton.setOnClickListener {
             binding.refreshButton.animate().rotation(binding.refreshButton.rotation + 720)
@@ -478,7 +478,7 @@ class MainActivity : AppCompatActivity() {
                     bbsSize = jsonArray.length()
                     for (i in 0 until jsonArray.length()) {
                         val j = jsonArray.getJSONObject(i)
-                        mDatas.add(
+                        boardData.add(
                             ShowQuestionData(
                                 j.get("bbsTitle").toString(),
                                 j.get("bbsContent").toString(),

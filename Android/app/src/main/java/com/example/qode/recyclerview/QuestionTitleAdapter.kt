@@ -10,11 +10,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
-import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Response
@@ -22,11 +19,8 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.qode.ContentActivity
 import com.example.qode.R
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.json.JSONArray
+import com.example.qode.ContentWithAnswerActivity
 import org.json.JSONObject
-import java.util.logging.Handler
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -52,17 +46,21 @@ class QuestionTitleAdapter(private val context: Context) :
         holder.itemView.setOnClickListener {
             val intent = Intent(
                 holder.itemView.context,
-                ContentActivity::class.java
+                //ContentActivity::class.java // TODO 원래 여기로 이동함.
+                ContentWithAnswerActivity::class.java
             ) // 여기서 contentActivity로 넘겨줄 때 title, 댓글 등 정보들을 서버로부터 받아와서 같이 넘겨주면 될 것 같다.
             val posBoardUrl = serverString.plus("board/").plus((position + 1).toString())
             //var (title, content, viewCnt, reco, hashtag, createdTime, writer) : String = ""
+            //startActivity(holder.itemView.context, intent, null)
+            startActivity(context,intent.addFlags(FLAG_ACTIVITY_NEW_TASK), null)
+
+
+            /** 서버 연결할 때 이 부분 주석 해제 해주면 된다.
             GlobalScope.launch {
                 val data = getDataFromServer(posBoardUrl)
                 println(data["title"]) // 값을 Map으로 받는다. key에는 title, value에는 title string값
-                //TODO 위의 title 값이 잘 받아지면 나머지도 다 처리해서 intent로 넘겨주는 작업하기.
                 Log.e("posBoardURL", posBoardUrl)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
                 intent.putExtra("title", data["title"])
                 intent.putExtra("content", data["content"])
                 intent.putExtra("viewCnt", data["viewCnt"])
@@ -73,6 +71,7 @@ class QuestionTitleAdapter(private val context: Context) :
                 intent.putExtra("boardNum", data["boardNum"]) // 첫 번째 parameter는 넘겨줄 이름, 두 번째 parameter는 data에 저장된 key로 접근해서 실제 value가져옴
                 startActivity(holder.itemView.context, intent, null) // 새로운 activity로 이동
             }
+            */
         }
     }
 
