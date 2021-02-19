@@ -40,8 +40,6 @@
             android:text="20:29 01/17/21"
             android:textSize="12sp"
             />
-
-
         <!--날짜 추가-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>

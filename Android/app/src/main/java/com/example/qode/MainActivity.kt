@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         var bottomSheetDialog: BottomSheetDialog
 
-
         val adapter = QuestionTitleAdapter(applicationContext)
         val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
 
