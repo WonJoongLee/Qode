@@ -109,10 +109,9 @@
 
             <ImageButton
                 android:id="@+id/writeAnswer"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:layout_weight="1"
-                android:layout_marginStart="5dp"
                 android:background="@color/transparent"
                 android:foreground="@drawable/ripple_gray"
                 android:padding="0dp"

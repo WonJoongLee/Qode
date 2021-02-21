@@ -113,14 +113,14 @@ class LoginActivity : AppCompatActivity() {
     private suspend fun loginCheck(serverString : String) = suspendCoroutine<String> {
         Handler(Looper.getMainLooper()).postDelayed({
             val request = object : StringRequest(
-                Method.POST, "${serverString}auth/login/", // url은 매번 바꿔줘야 함.
+                Method.POST, "${serverString}auth/login/",
                 Response.Listener { response ->
                     val jsonObject = JSONObject(response)
                     val state:String = jsonObject.getString("state")//성공적으로 처리 되었는지 확인하는 string
-                    val nickName : String = jsonObject.getString("nickName")
+                    val nickName : String = jsonObject.getString("nick")
                     it.resume(state) // 서버로부터 받은 state를 그대로 넘겨준다.
                     Log.d("Connection", state)
-                    Log.d("Nickname", nickName)
+                    Log.d("nick", nickName)
                 },
                 Response.ErrorListener { error ->
                     Log.e("Connection", "Error : $error")

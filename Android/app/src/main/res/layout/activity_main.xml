@@ -70,12 +70,32 @@
                             app:backgroundTint="@null" />
 
                         <Button
+                            android:id="@+id/cppLangButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="C++"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
                             android:id="@+id/javaLangButton"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
                             android:background="@drawable/button_language_background"
                             android:text="JAVA"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
+                            android:id="@+id/algorithmButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="ALGORITHM"
                             android:textColor="@color/black"
                             app:backgroundTint="@null" />
 
@@ -90,32 +110,52 @@
                             app:backgroundTint="@null" />
 
                         <Button
+                            android:id="@+id/serverButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="SERVER"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
+                            android:id="@+id/webButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="WEB"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
+                            android:id="@+id/mobileButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="MOBILE"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
+                            android:id="@+id/iotButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="10dp"
+                            android:background="@drawable/button_language_background"
+                            android:text="IOT"
+                            android:textColor="@color/black"
+                            app:backgroundTint="@null" />
+
+                        <Button
                             android:id="@+id/etcButton"
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
                             android:background="@drawable/button_language_background"
                             android:text="ETC"
-                            android:textColor="@color/black"
-                            app:backgroundTint="@null" />
-
-                        <Button
-                            android:id="@+id/temp1Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/button_language_background"
-                            android:text="TEMP"
-                            android:textColor="@color/black"
-                            app:backgroundTint="@null" />
-
-                        <Button
-                            android:id="@+id/temp2Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:layout_marginEnd="10dp"
-                            android:background="@drawable/button_language_background"
-                            android:text="TEMP"
                             android:textColor="@color/black"
                             app:backgroundTint="@null" />
 

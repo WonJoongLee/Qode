@@ -2,6 +2,7 @@ package com.example.qode
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.ColorStateList
@@ -18,6 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.widget.MultiAutoCompleteTextView.CommaTokenizer
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +28,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.qode.databinding.ActivityMainBinding
@@ -37,6 +41,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
+import org.json.JSONObject
 import java.lang.Exception
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -52,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     val boardData = mutableListOf<ShowQuestionData>()
     private var isFabOpen = false
     var bbsSize: Int = 0
+    var commaCnt = 0 // 글쓰기 화면에서 해시태그가 몇 개인지 확인하기 위해 콤마를 센다. 해시태그는 총 세개까지 되므로 콤마가 총 세 개 이상이면 안된다
 
     @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,21 +76,26 @@ class MainActivity : AppCompatActivity() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
         editor.apply {
-            putString("serverUrl", "http://800628fb7838.ngrok.io/") // server Url 추가
+            putString("serverUrl", "http://39aeefe92674.ngrok.io/") // server Url 추가
         }.apply()
 
         val serverString = sharedPreferences.getString("serverUrl", null)
-        val boardServerString = serverString.plus("board/")
+        val boardServerString = serverString.plus("boards/")
+        val postBoardServerString = boardServerString.plus("new/test12/")
+        println("@@@@ $postBoardServerString")
         getBoardData(boardServerString)
 
         Log.e("ServerString", serverString!!)
 
         buttonClicked["C"] = false
+        buttonClicked["CPP"] = false
         buttonClicked["JAVA"] = false
+        buttonClicked["ALGORITHM"] = false
         buttonClicked["PYTHON"] = false
+        buttonClicked["SERVER"] = false
+        buttonClicked["WEB"] = false
+        buttonClicked["MOBILE"] = false
         buttonClicked["ETC"] = false
-        buttonClicked["TEMP1"] = false
-        buttonClicked["TEMP2"] = false
 
         println("@@@ 0번 : $boardData")
 
@@ -149,6 +160,13 @@ class MainActivity : AppCompatActivity() {
         binding.refreshButton.setOnClickListener {
             binding.refreshButton.animate().rotation(binding.refreshButton.rotation + 720)
                 .setDuration(500).start() // 버튼 클릭 시, 0.5초 동안 두 번 회전해서, 새로고침 했다는 것을 알려준다.
+
+            for(i in buttonClicked){
+                if(i.value){
+                    println(i.key)
+                }
+            }//TODO 여기에서 선택 된 것들을 가지고 서버에서 분류해서 게시물 가져오기
+
         }
 
         binding.cLangButton.setOnClickListener {
@@ -160,6 +178,18 @@ class MainActivity : AppCompatActivity() {
                 binding.cLangButton.setBackgroundResource(R.drawable.button_language_background)
                 binding.cLangButton.setTextColor(Color.parseColor("#000000"))
                 buttonClicked["C"] = false
+            }
+        }
+
+        binding.cppLangButton.setOnClickListener {
+            if (buttonClicked["CPP"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.cppLangButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.cppLangButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["CPP"] = true
+            } else {
+                binding.cppLangButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.cppLangButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["CPP"] = false
             }
         }
 
@@ -175,6 +205,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.algorithmButton.setOnClickListener {
+            if (buttonClicked["ALGORITHM"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.algorithmButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.algorithmButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["ALGORITHM"] = true
+            } else {
+                binding.algorithmButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.algorithmButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["ALGORITHM"] = false
+            }
+        }
+
         binding.pythonLangButton.setOnClickListener {
             if (buttonClicked["PYTHON"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
                 binding.pythonLangButton.setBackgroundResource(R.drawable.button_language_background_on)
@@ -184,6 +226,54 @@ class MainActivity : AppCompatActivity() {
                 binding.pythonLangButton.setBackgroundResource(R.drawable.button_language_background)
                 binding.pythonLangButton.setTextColor(Color.parseColor("#000000"))
                 buttonClicked["PYTHON"] = false
+            }
+        }
+
+        binding.serverButton.setOnClickListener {
+            if (buttonClicked["SERVER"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.serverButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.serverButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["SERVER"] = true
+            } else {
+                binding.serverButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.serverButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["SERVER"] = false
+            }
+        }
+
+        binding.webButton.setOnClickListener {
+            if (buttonClicked["WEB"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.webButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.webButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["WEB"] = true
+            } else {
+                binding.webButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.webButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["WEB"] = false
+            }
+        }
+
+        binding.mobileButton.setOnClickListener {
+            if (buttonClicked["MOBILE"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.mobileButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.mobileButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["MOBILE"] = true
+            } else {
+                binding.mobileButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.mobileButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["MOBILE"] = false
+            }
+        }
+
+        binding.iotButton.setOnClickListener {
+            if (buttonClicked["IOT"] == false) { // 처음에는 모두 false 처리 되어 있는 상태이므로, 조건문도 false부터 검사한다.
+                binding.iotButton.setBackgroundResource(R.drawable.button_language_background_on)
+                binding.iotButton.setTextColor(Color.parseColor("#FFFFFF"))
+                buttonClicked["IOT"] = true
+            } else {
+                binding.iotButton.setBackgroundResource(R.drawable.button_language_background)
+                binding.iotButton.setTextColor(Color.parseColor("#000000"))
+                buttonClicked["IOT"] = false
             }
         }
 
@@ -210,25 +300,13 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.fab.setOnClickListener {
-            if (sharedPreferences.getBoolean("isLogin", false)) {
+            if (sharedPreferences.getBoolean("isLogin", false)) { // TODO 원래 false여야 한다.
                 if (!isFabOpen) { // 게시글 쓰는 창이 지금 화면에 나오고 있는 상태면
 
-//                    field1.addTextChangedListener(object : TextWatcher {
-//                        override fun afterTextChanged(s: Editable) {}
-//                        override fun beforeTextChanged(
-//                            s: CharSequence, start: Int,
-//                            count: Int, after: Int
-//                        ) {
-//                        }
-//
-//                        override fun onTextChanged(
-//                            s: CharSequence, start: Int,
-//                            before: Int, count: Int
-//                        ) {
-//                            if (s.length != 0) field2.setText("")
-//                        }
-//                    })
+                    binding.postContent.hint = " ■ 코드를 입력하시려면 아래와 같이 코드 앞과 뒤에 ```를 표시해주세요.\n ```\n printf(\"hello world\");\n ```\n\n ■ 글씨를 진하게 하시려면" +
+                            "아래와 같이 문자 앞과 뒤에 **를 표시해주세요.\n **대한민국**"
 
+                    //추천 해시태그 목록
                     val multiAutoTextStrings = arrayOf(
                         "#C",
                         "#C++",
@@ -241,6 +319,7 @@ class MainActivity : AppCompatActivity() {
                         "#IOT",
                         "#ETC"
                     )
+                    // edittext자동완성시켜주는 부분
                     val multiAutoTextAdapter = ArrayAdapter(
                         this,
                         android.R.layout.simple_list_item_1,
@@ -254,12 +333,15 @@ class MainActivity : AppCompatActivity() {
                     multiAutoTextView.setAdapter(multiAutoTextAdapter)
                     multiAutoTextView.threshold = 1 // 한 글자부터 출력될 수 있도록 설정
 
+                    /**
+                     * 글쓰기 태그 입력시 자동으로 hashtag 추천해주는 것 중 string을 다루는 부분
+                     * */
                     multiAutoTextView.onItemClickListener =
                         AdapterView.OnItemClickListener { parent, view, position, id ->
                             var commaCnt = 0
                             val tempText = multiAutoTextView.text
                             val changeText: Spannable = tempText
-                            var autoTextinChar = multiAutoTextView.text
+                            val autoTextinChar = multiAutoTextView.text
                             for (i in 0 until multiAutoTextView.length()) {
                                 if (autoTextinChar[i] != ' ' && autoTextinChar[i] != ',') { // 색을 넣어주는 부분
                                     changeText.setSpan(
@@ -278,24 +360,80 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     binding.sendButton.setOnClickListener {
-                        val request = object : StringRequest(Method.POST, boardServerString,
-                            Response.Listener { response ->
-                                val jsonArray =
-                                    JSONArray(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
-                                bbsSize = jsonArray.length()
-                            }, Response.ErrorListener { error ->
-                                Log.e("ERROR", error.toString())
-                            }) {
-                            override fun getParams(): Map<String, String> {
-                                val params: MutableMap<String, String> = HashMap()
-                                params["bbsTitle"] = binding.postTitle.text.toString()
-                                params["bbsContent"] = binding.postContent.text.toString()
-
-                                return params
+                        val hashtagStr = multiAutoTextView.text
+                        var commaCnt = 0
+                        for(i in hashtagStr){
+                            if(i==','){
+                                commaCnt++
                             }
                         }
-                        val postQueue = Volley.newRequestQueue(this)
-                        postQueue.add(request)
+
+                        if(commaCnt<=2){
+                            val requestSendBoard = object : StringRequest(Method.POST, postBoardServerString,
+                                Response.Listener { response ->
+                                    //val jsonArray =
+//                                        JSONObject(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
+                                    //bbsSize = jsonArray.length()
+                                }, Response.ErrorListener { error ->
+                                    Log.e("ERROR", error.toString())
+                                }) {
+
+                                override fun getParams(): Map<String, String> {
+                                    val params: MutableMap<String, String> = HashMap()
+                                    params["bbsTitle"] = binding.postTitle.text.toString()
+                                    params["bbsContent"] = binding.postContent.text.toString()
+                                    val hashtag = binding.autoCompleteTag.text.toString()
+                                    var finalHashtagStr = ""
+                                    for(i in hashtag){
+                                        if(i == ',' || i == ' '){
+                                            continue
+                                        }else{
+                                            finalHashtagStr.plus(i)
+                                        }
+                                    }
+                                    //params["hashTagContent"] = finalHashtagStr
+                                    params["hashTagContent"] = "#JAVA"
+                                    return params
+                                }
+                            }
+                            requestSendBoard.retryPolicy = object:RetryPolicy{
+                                override fun retry(error: VolleyError?) {
+
+                                }
+
+                                override fun getCurrentRetryCount(): Int {
+                                    return 50000
+                                }
+
+                                override fun getCurrentTimeout(): Int {
+                                    return 50000
+                                }
+
+                            }
+                            val postQueue = Volley.newRequestQueue(this)
+                            postQueue.add(requestSendBoard)
+                        }else if(commaCnt>2){
+                            Toast.makeText(this, "해시태그는 최대 세개입니다.", Toast.LENGTH_SHORT).show()
+                        }
+
+//                        val request = object : StringRequest(Method.POST, boardServerString,
+//                            Response.Listener { response ->
+//                                val jsonArray =
+//                                    JSONArray(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
+//                                bbsSize = jsonArray.length()
+//                            }, Response.ErrorListener { error ->
+//                                Log.e("ERROR", error.toString())
+//                            }) {
+//                            override fun getParams(): Map<String, String> {
+//                                val params: MutableMap<String, String> = HashMap()
+//                                params["bbsTitle"] = binding.postTitle.text.toString()
+//                                params["bbsContent"] = binding.postContent.text.toString()
+//
+//                                return params
+//                            }
+//                        }
+//                        val postQueue = Volley.newRequestQueue(this)
+//                        postQueue.add(request)
                     }
                 }
                 showReveal()
@@ -350,7 +488,7 @@ class MainActivity : AppCompatActivity() {
                     editor.apply {
                         putBoolean("isLogin", false)//로그아웃했으므로 isLogin Boolean으로 처리
                     }.apply()
-                    Log.d("Login Data", "${sharedPreferences.getBoolean("isLogin", true)}")
+                    Log.d("Login Data", "${sharedPreferences.getBoolean("isLogin", false)}")
                     setBottomSheetVisibility(
                         sharedPreferences,
                         sheetView
@@ -363,7 +501,18 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.setContentView(sheetView)
             bottomSheetDialog.show()
         }
+
     }
+
+//    fun View.hideKeyboard() {
+//        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.hideSoftInputFromWindow(windowToken, 0)
+//    }
+//
+//    fun View.showKeyboard() {
+//        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+//    }
 
     //TODO private suspend fun serverLogout() = suspendCoroutine<> {  }
 
@@ -481,12 +630,12 @@ class MainActivity : AppCompatActivity() {
                             ShowQuestionData(
                                 j.get("bbsTitle").toString(),
                                 j.get("bbsContent").toString(),
-                                j.get("created_at").toString(),
+                                j.get("createdAt").toString(),
                                 j.get("boarder").toString()
                             )
                         )
                         println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
-                        println("content : ${j.get("bbsContent")}, created_at : ${j.get("created_at")}")
+                        println("content : ${j.get("bbsContent")}, createdAt : ${j.get("createdAt")}")
                         Log.e("Value", j.toString())
                     }
                     //println("@@@### true")
@@ -508,4 +657,5 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
 
