@@ -10,7 +10,6 @@ import com.example.qode.MainActivity
 import com.example.qode.R
 import com.example.qode.databinding.ActivitySplashScreenBinding
 import com.example.qode.databinding.ActivitySplashScreenBindingImpl
-import com.example.qode.fragment.SamplePagerAdapter
 import com.example.qode.preferences.SharedData.Companion.prefs
 
 class SplashActivity : AppCompatActivity() {

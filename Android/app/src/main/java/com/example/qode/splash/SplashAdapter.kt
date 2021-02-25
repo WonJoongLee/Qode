@@ -5,9 +5,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.example.qode.fragment.BaseFragment
-import com.example.qode.frame.FrameC
-import com.example.qode.frame.FrameJava
-import com.example.qode.frame.FramePython
 
 class SplashAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT ) {
     override fun getCount() = 3

@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     private var isFabOpen = false
     var bbsSize: Int = 0
     var commaCnt = 0 // 글쓰기 화면에서 해시태그가 몇 개인지 확인하기 위해 콤마를 센다. 해시태그는 총 세개까지 되므로 콤마가 총 세 개 이상이면 안된다
+    private var idArr = mutableListOf<Int>()
 
     @SuppressLint("ResourceAsColor", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +77,9 @@ class MainActivity : AppCompatActivity() {
         println("@@@@@@ $getTime")
 
 
-        val adapter = QuestionTitleAdapter(applicationContext)
+        var adapter = QuestionTitleAdapter(applicationContext, idArr)
         val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
+
 
         val buttonClicked =
             mutableMapOf<String, Boolean>() // scroll view의 버튼이 클릭 됐는지 확인하기 위한 mutableMap
@@ -89,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         Log.e("Nickname", sharedPreferences.getString("nickname", "").toString())
 
         editor.apply {
-            putString("serverUrl", "http://e3bceb02d8a8.ngrok.io/") // server Url 추가
+            putString("serverUrl", "http://6403e44b29f7.ngrok.io/") // server Url 추가
         }.apply()
 
         val serverString = sharedPreferences.getString("serverUrl", null)
@@ -168,13 +170,20 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             binding.mainProgressbar.visibility = View.GONE
         }, 1500) // 서버에서 데이터 받아오는 데 시간이 걸리므로 대략 2초 이따가 adapter 연결해서 데이터 보여주는 식으로 함.
+
+
+        adapter = QuestionTitleAdapter(applicationContext, idArr)
         recyclerView.adapter = adapter
+
 
         println("@@@ 2번 : $boardData")
 
         binding.refreshButton.setOnClickListener {
             binding.refreshButton.animate().rotation(binding.refreshButton.rotation + 720)
                 .setDuration(500).start() // 버튼 클릭 시, 0.5초 동안 두 번 회전해서, 새로고침 했다는 것을 알려준다.
+
+            // val getHashtagContentServerString = serverString.plus("search/board?hashtag=${}")// TODO 여기 해시태그 검색 넣기
+
 
             //TODO 이 부분 라우터 하나 받아서 검색하는 식으로 다시 하기로 했음
 //            var newBoardList = mutableListOf<ShowQuestionData>()
@@ -682,6 +691,7 @@ class MainActivity : AppCompatActivity() {
                                 j.get("hashTagContent").toString()
                             )
                         )
+                        idArr.add(j.get("id").toString().toInt())
                         //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
                         //println("content : ${j.get("bbsContent")}, createdAt : ${j.get("createdAt")}")
                         //Log.e("Value", j.toString())

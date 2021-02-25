@@ -1,6 +1,8 @@
 package com.example.qode.recyclerview
 
+import android.app.Notification
 import android.content.Context
+import android.os.Looper
 import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
@@ -9,15 +11,16 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.qode.ContentWithAnswerActivity
 import com.example.qode.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.logging.Handler
+import java.util.logging.LogRecord
 
-class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
+class AnswerAdapter(private val context: Context, private val tempArr: IntArray) :
     RecyclerView.Adapter<AnswerAdapter.AnswerViewHolder>() {
 
     var data = mutableListOf<AnswerData>()
@@ -38,9 +41,15 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
     }
 
     interface OnItemClickListener {
-        fun onItemClick(v: View?, position: Int)
-        suspend fun onRecoAddButtonClick(v: View?, position: Int, answerIdArray : IntArray) : Boolean
-        suspend fun onRecoSubtractButtonClick(v: View?, position: Int, answerIdArray : IntArray) : Boolean
+        fun onWriteAnswerCommentClick(v: View?, position: Int, answerIdArray: IntArray)
+        suspend fun onRecoAddButtonClick(v: View?, position: Int, answerIdArray: IntArray): Boolean
+        suspend fun onRecoSubtractButtonClick(
+            v: View?,
+            position: Int,
+            answerIdArray: IntArray
+        ): Boolean
+
+        suspend fun oncommentButtonClick(v: View?, position: Int): MutableList<CommentData>
     }
 
     //OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
@@ -48,20 +57,31 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
         this.mListener = listener
     }
 
-    class AnswerViewHolder(itemView: View, val tempArr : IntArray) : RecyclerView.ViewHolder(itemView) {
+    class AnswerViewHolder(itemView: View, private val answerIdArray: IntArray) :
+        RecyclerView.ViewHolder(
+            itemView
+        ) {
         private val answerString = itemView.findViewById<TextView>(R.id.answer) // 사용자가 답변한 String
         private val commentViewCnt = itemView.findViewById<TextView>(R.id.commentViewCnt) // 댓글 수
         private val answerWriter = itemView.findViewById<TextView>(R.id.answerWriter) // 답변 작성자
         private val recoCnt = itemView.findViewById<TextView>(R.id.recoCnt) // 답변 추천 수
         private val thumbsUp = itemView.findViewById<ImageButton>(R.id.answer_thumbs_up) // 좋아요 표시
-        private val thumbsDown = itemView.findViewById<ImageButton>(R.id.answer_thumbs_down) // 싫어요 표시
+        private val thumbsDown =
+            itemView.findViewById<ImageButton>(R.id.answer_thumbs_down) // 싫어요 표시
         private val commentButton = itemView.findViewById<ImageButton>(R.id.commentImageButton)
         private val commentList = itemView.findViewById<RecyclerView>(R.id.commentRV)
         private val writeAnswerButton = itemView.findViewById<ImageButton>(R.id.writeAnswer)
+        private val plzNewCmtTV = itemView.findViewById<TextView>(R.id.plzNewCmtTV)
+
         //private lateinit var mListener : AnswerViewHolder.OnItemClickListener // 리스너 객체 참조를 저장하는 변수
 
         //private var bottomView = itemView.findViewById<ConstraintLayout>(R.id.bottomWriterCmtConstraint)
-        fun bind(answerData: AnswerData, pos: Int, context: Context, mListener : OnItemClickListener) {
+        fun bind(
+            answerData: AnswerData,
+            pos: Int,
+            context: Context,
+            mListener: OnItemClickListener
+        ) {
             var thumbsUpClicked = false // Thumbs Up button이 안눌러진 상태면 false, 눌러진 상태면 true다.
             var thumbsDownClicked = false // Thumbs Down button이 안눌러진 상태면 false, 눌러진 상태면 true다.
             var commentClicked =
@@ -71,21 +91,70 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
             commentViewCnt.text = answerData.comment
             answerWriter.text = answerData.writer
             recoCnt.text = answerData.recoCnt
+            val serverUrl =
+                context.getSharedPreferences("sharedPrefs", AppCompatActivity.MODE_PRIVATE)
+                    .getString(
+                        "serverUrl",
+                        null
+                    )
+            val userid = context.getSharedPreferences("sharedPrefs", AppCompatActivity.MODE_PRIVATE)
+                .getString(
+                    "userid",
+                    null
+                )
 
-            /*아래 리사이클러 뷰는 댓글 리사이클러 뷰*/
-            val adapter = CommentAdapter(context)
-            val recyclerView = itemView.findViewById<RecyclerView>(R.id.commentRV)
-            val commentData = mutableListOf<CommentData>()
-            recyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+//            /*아래 리사이클러 뷰는 댓글 리사이클러 뷰*/
+//            val adapter = CommentAdapter(context)
+//            val recyclerView = itemView.findViewById<RecyclerView>(R.id.commentRV)
+//            val commentData = mutableListOf<CommentData>()
+//            recyclerView.layoutManager =
+//                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             //아래 데이터는 서버에서부터 불러와서 추가해주면 된다. pos를 받으니 pos에 해당하는 서버 주소 확인 후 값들을 가져오면 될 것 같다
-            commentData.add(CommentData("Kotlin이 Java보다 좋군요. 좋은 정보 감사합니다. - 다빈치"))
-            commentData.add(CommentData("오늘 날씨가 좋네요. - 맥아더"))
-            commentData.add(CommentData("좋은 답변 감사합니다. 행복한 하루 되세요. - 네이마르"))
-            commentData.add(CommentData("댓글테스트 - 도널드 트럼프"))
-            recyclerView.adapter = adapter
-            adapter.commentData = commentData
-            adapter.notifyDataSetChanged()
+
+
+//            commentData.add(CommentData("Kotlin이 Java보다 좋군요. 좋은 정보 감사합니다. - 다빈치"))
+//            commentData.add(CommentData("오늘 날씨가 좋네요. - 맥아더"))
+//            commentData.add(CommentData("좋은 답변 감사합니다. 행복한 하루 되세요. - 네이마르"))
+//            commentData.add(CommentData("댓글테스트 - 도널드 트럼프"))
+
+            commentButton.setOnClickListener { // 댓글 버튼 클릭 시 댓글 보이도록 설정
+                /*아래 리사이클러 뷰는 댓글 리사이클러 뷰*/
+                val adapter = CommentAdapter(context)
+                val recyclerView = itemView.findViewById<RecyclerView>(R.id.commentRV)
+                val commentData = mutableListOf<CommentData>()
+                recyclerView.layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (commentList.visibility == View.GONE) {
+                    commentList.visibility = View.VISIBLE
+                    var isComment = false
+                    GlobalScope.launch {
+                        val commentStringData = mListener.oncommentButtonClick(itemView, pos)
+                        if (commentStringData.isNotEmpty()) {
+                            isComment = true
+                            for (i in commentStringData) {
+                                commentData.add(i)
+                            }
+                        }
+                    }
+                    android.os.Handler(Looper.getMainLooper()).postDelayed({
+                        //commentData.add(CommentData("Kotlin이 Java보다 좋군요. 좋은 정보 감사합니다. - 다빈치"))
+                        if (!isComment) plzNewCmtTV.visibility =
+                            View.VISIBLE // 댓글이 없을 때 댓글을 새로 달아달라는 textview를 보여준다.
+                        recyclerView.adapter = adapter
+                        adapter.commentData = commentData
+                        adapter.notifyDataSetChanged()
+                        println(commentData)
+                    }, 700) // 댓글을 불러오는데 0.5초 정도 걸린다.
+                } else if (commentList.visibility == View.VISIBLE) {
+                    commentList.visibility = View.GONE
+                    plzNewCmtTV.visibility = View.GONE
+                }
+            }
+
+
+//            recyclerView.adapter = adapter
+//            adapter.commentData = commentData
+//            adapter.notifyDataSetChanged()
 
             writeAnswerButton.setOnClickListener {
                 val inputMethodManager =
@@ -93,7 +162,7 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 
                 if (pos != RecyclerView.NO_POSITION) {
-                    mListener.onItemClick(it, pos)
+                    mListener.onWriteAnswerCommentClick(it, pos, answerIdArray)
                 }
             }
 
@@ -101,9 +170,9 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
                 thumbsUpClicked = if (!thumbsUpClicked) { // 클릭되지 않은 상황이라면
                     if (pos != RecyclerView.NO_POSITION) {
                         GlobalScope.launch {
-                            val temp = mListener.onRecoAddButtonClick(it, pos, tempArr)
+                            val temp = mListener.onRecoAddButtonClick(it, pos, answerIdArray)
                             Log.e("눌렀는지", temp.toString()) // true면 이미 눌름
-                            if(!temp){  // 처음 누르는 경우
+                            if (!temp) {  // 처음 누르는 경우
                                 thumbsUp.setImageResource(R.drawable.ic_baseline_thumb_up_24_yellow) // Thumbs UP을 노란색으로 바꾸고
                             }
                         }
@@ -119,8 +188,8 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
 
                     if (pos != RecyclerView.NO_POSITION) {
                         GlobalScope.launch {
-                            val temp = mListener.onRecoSubtractButtonClick(it, pos, tempArr)
-                            if(!temp){  // 처음 누르는 경우
+                            val temp = mListener.onRecoSubtractButtonClick(it, pos, answerIdArray)
+                            if (!temp) {  // 처음 누르는 경우
                                 thumbsDown.setImageResource(R.drawable.ic_baseline_thumb_down_24_yellow) // Thumbs UP을 노란색으로 바꾸고
                             }
                         }
@@ -131,15 +200,8 @@ class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
                     false// 클릭된 상황이 아니므로 false 처리한다.
                 }
             }
-            commentButton.setOnClickListener { // 댓글 버튼 클릭 시 댓글 보이도록 설정
-                if (commentList.visibility == View.GONE) {
-                    commentList.visibility = View.VISIBLE
-                } else if (commentList.visibility == View.VISIBLE) {
-                    commentList.visibility = View.GONE
-                }
-            }
-        }
 
+        }
 
 
     }

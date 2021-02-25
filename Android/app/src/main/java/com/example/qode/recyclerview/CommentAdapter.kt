@@ -11,6 +11,7 @@ import com.example.qode.R
 class CommentAdapter(private val context : Context) :RecyclerView.Adapter<CommentAdapter.CommentViewHolder>(){
 
     var commentData = mutableListOf<CommentData>()
+    private lateinit var mListener: CommentAdapter.OnItemClickListener // 리스너 객체 참조를 저장하는 변수
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false)
@@ -19,6 +20,14 @@ class CommentAdapter(private val context : Context) :RecyclerView.Adapter<Commen
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         holder.bind(commentData[position])
+    }
+
+    interface OnItemClickListener{
+        fun onCommentClick(v:View?, position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.mListener = listener
     }
 
     override fun getItemCount(): Int = commentData.size
