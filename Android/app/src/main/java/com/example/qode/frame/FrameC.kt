@@ -90,7 +90,7 @@ class FrameC : BaseFragment() {
                     bbsSize = jsonArray.length()
                     for(i in 0 until jsonArray.length()){
                         val j = jsonArray.getJSONObject(i)
-                        mDatas.add(ShowQuestionData(j.get("bbsTitle").toString(), j.get("bbsContent").toString(), j.get("created_at").toString(), j.get("border").toString()))
+                        mDatas.add(ShowQuestionData(j.get("bbsTitle").toString(), j.get("bbsContent").toString(), j.get("created_at").toString(), j.get("border").toString(), j.get("hashtag").toString()))
                         println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
                         println("content : ${j.get("bbsContent")}, created_at : ${j.get("created_at")}")
                         Log.e("Value", j.toString())

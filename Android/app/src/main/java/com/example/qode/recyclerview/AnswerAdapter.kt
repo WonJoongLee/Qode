@@ -1,6 +1,7 @@
 package com.example.qode.recyclerview
 
 import android.content.Context
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +9,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.qode.ContentWithAnswerActivity
 import com.example.qode.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class AnswerAdapter(private val context: Context) :
+class AnswerAdapter(private val context: Context, val tempArr : IntArray) :
     RecyclerView.Adapter<AnswerAdapter.AnswerViewHolder>() {
 
     var data = mutableListOf<AnswerData>()
@@ -23,7 +28,7 @@ class AnswerAdapter(private val context: Context) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnswerViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_answer, parent, false)
 
-        return AnswerViewHolder(view)
+        return AnswerViewHolder(view, tempArr)
     }
 
     override fun getItemCount(): Int = data.size
@@ -34,20 +39,22 @@ class AnswerAdapter(private val context: Context) :
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        suspend fun onRecoAddButtonClick(v: View?, position: Int, answerIdArray : IntArray) : Boolean
+        suspend fun onRecoSubtractButtonClick(v: View?, position: Int, answerIdArray : IntArray) : Boolean
     }
 
-    //OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드드
+    //OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mListener = listener
     }
 
-    class AnswerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class AnswerViewHolder(itemView: View, val tempArr : IntArray) : RecyclerView.ViewHolder(itemView) {
         private val answerString = itemView.findViewById<TextView>(R.id.answer) // 사용자가 답변한 String
         private val commentViewCnt = itemView.findViewById<TextView>(R.id.commentViewCnt) // 댓글 수
         private val answerWriter = itemView.findViewById<TextView>(R.id.answerWriter) // 답변 작성자
         private val recoCnt = itemView.findViewById<TextView>(R.id.recoCnt) // 답변 추천 수
-        private val thumbsUp = itemView.findViewById<ImageButton>(R.id.thumbs_up) // 좋아요 표시
-        private val thumbsDown = itemView.findViewById<ImageButton>(R.id.thumbs_down) // 싫어요 표시
+        private val thumbsUp = itemView.findViewById<ImageButton>(R.id.answer_thumbs_up) // 좋아요 표시
+        private val thumbsDown = itemView.findViewById<ImageButton>(R.id.answer_thumbs_down) // 싫어요 표시
         private val commentButton = itemView.findViewById<ImageButton>(R.id.commentImageButton)
         private val commentList = itemView.findViewById<RecyclerView>(R.id.commentRV)
         private val writeAnswerButton = itemView.findViewById<ImageButton>(R.id.writeAnswer)
@@ -59,6 +66,7 @@ class AnswerAdapter(private val context: Context) :
             var thumbsDownClicked = false // Thumbs Down button이 안눌러진 상태면 false, 눌러진 상태면 true다.
             var commentClicked =
                 false // comment 클릭 여부 확인 위한 변수. 근데 다른 방법으로 클릭 여부를 판단해서 지금은 쓸 당장은 없음.
+            val pos = adapterPosition
             answerString.text = answerData.answer
             commentViewCnt.text = answerData.comment
             answerWriter.text = answerData.writer
@@ -84,16 +92,22 @@ class AnswerAdapter(private val context: Context) :
                     context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 
-                val pos = adapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
                     mListener.onItemClick(it, pos)
-
                 }
             }
 
             thumbsUp.setOnClickListener {
                 thumbsUpClicked = if (!thumbsUpClicked) { // 클릭되지 않은 상황이라면
-                    thumbsUp.setImageResource(R.drawable.ic_baseline_thumb_up_24_yellow) // Thumbs UP을 노란색으로 바꾸고
+                    if (pos != RecyclerView.NO_POSITION) {
+                        GlobalScope.launch {
+                            val temp = mListener.onRecoAddButtonClick(it, pos, tempArr)
+                            Log.e("눌렀는지", temp.toString()) // true면 이미 눌름
+                            if(!temp){  // 처음 누르는 경우
+                                thumbsUp.setImageResource(R.drawable.ic_baseline_thumb_up_24_yellow) // Thumbs UP을 노란색으로 바꾸고
+                            }
+                        }
+                    }
                     true // 클릭되었으니 thumbsUpClicked를 true값으로 처리한다.
                 } else { // 클릭 된 상황이라면
                     thumbsUp.setImageResource(R.drawable.ic_baseline_thumb_up_24_gray) // 회색으로 바꿔 클릭 처리를 해제하고
@@ -102,7 +116,15 @@ class AnswerAdapter(private val context: Context) :
             }
             thumbsDown.setOnClickListener {
                 thumbsDownClicked = if (!thumbsDownClicked) { // 클릭되지 않은 상황이라면
-                    thumbsDown.setImageResource(R.drawable.ic_baseline_thumb_down_24_yellow) // 노란색으로 표시해서 활성화시킨다.
+
+                    if (pos != RecyclerView.NO_POSITION) {
+                        GlobalScope.launch {
+                            val temp = mListener.onRecoSubtractButtonClick(it, pos, tempArr)
+                            if(!temp){  // 처음 누르는 경우
+                                thumbsDown.setImageResource(R.drawable.ic_baseline_thumb_down_24_yellow) // Thumbs UP을 노란색으로 바꾸고
+                            }
+                        }
+                    }
                     true//클릭된 상황이므로 true처리한다.
                 } else { // 클릭 된 상황이라면
                     thumbsDown.setImageResource(R.drawable.ic_baseline_thumb_down_24_gray) // 회색으로 표시해서 다시 비활성화 시킨다.
@@ -117,5 +139,8 @@ class AnswerAdapter(private val context: Context) :
                 }
             }
         }
+
+
+
     }
 }

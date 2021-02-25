@@ -116,11 +116,19 @@ class LoginActivity : AppCompatActivity() {
                 Method.POST, "${serverString}auth/login/",
                 Response.Listener { response ->
                     val jsonObject = JSONObject(response)
+                    println("@@@@ JSONOBJECTLogin : $jsonObject")
                     val state:String = jsonObject.getString("state")//성공적으로 처리 되었는지 확인하는 string
                     val nickName : String = jsonObject.getString("nick")
                     it.resume(state) // 서버로부터 받은 state를 그대로 넘겨준다.
                     Log.d("Connection", state)
                     Log.d("nick", nickName)
+                    val sharedPreferences : SharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+                    val editor : SharedPreferences.Editor = sharedPreferences.edit()
+                    editor.apply{
+                        putString("nickname", nickName)
+                        putString("userid", binding.idET.text.toString())
+                    }.apply()
+
                 },
                 Response.ErrorListener { error ->
                     Log.e("Connection", "Error : $error")

@@ -43,6 +43,9 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.hypot
@@ -59,11 +62,19 @@ class MainActivity : AppCompatActivity() {
     var bbsSize: Int = 0
     var commaCnt = 0 // 글쓰기 화면에서 해시태그가 몇 개인지 확인하기 위해 콤마를 센다. 해시태그는 총 세개까지 되므로 콤마가 총 세 개 이상이면 안된다
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint("ResourceAsColor", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         var bottomSheetDialog: BottomSheetDialog
+
+        //TODO 날짜 부분
+        val now = System.currentTimeMillis()
+        val mDate = Date(now)
+        val simpleDate : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+        val getTime = simpleDate.format(mDate)
+        println("@@@@@@ $getTime")
+
 
         val adapter = QuestionTitleAdapter(applicationContext)
         val recyclerView = findViewById<RecyclerView>(R.id.mainRecyclerView)
@@ -75,13 +86,15 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
+        Log.e("Nickname", sharedPreferences.getString("nickname", "").toString())
+
         editor.apply {
-            putString("serverUrl", "http://39aeefe92674.ngrok.io/") // server Url 추가
+            putString("serverUrl", "http://e3bceb02d8a8.ngrok.io/") // server Url 추가
         }.apply()
 
         val serverString = sharedPreferences.getString("serverUrl", null)
-        val boardServerString = serverString.plus("boards/")
-        val postBoardServerString = boardServerString.plus("new/test12/")
+        val boardServerString = serverString.plus("boards")
+        val postBoardServerString = serverString.plus("boards/test12")
         println("@@@@ $postBoardServerString")
         getBoardData(boardServerString)
 
@@ -101,54 +114,56 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
-        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+//        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+//        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+//        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
+//        boardData.add(ShowQuestionData("TextView Title", "여기에는 내용이 들어갑니다.", " ", " "))
 
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(false)
-        val request = object : StringRequest(Method.GET, serverString,
-            Response.Listener { response ->
-                val jsonArray =
-                    JSONArray(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
-                bbsSize = jsonArray.length()
-                for (i in 0 until jsonArray.length()) {
-                    val j = jsonArray.getJSONObject(i)
-
-//                    if(j.get("bbstTitle").toString().isEmpty()){
-//                        continue
-//                    }
-
-                    boardData.add(
-                        ShowQuestionData(
-                            j.get("bbsTitle").toString(),
-                            j.get("bbsContent").toString(),
-                            j.get("created_at").toString(),
-                            j.get("boarder").toString()
-                        )
-                    )
-                    //boardData.addAll()
-                    //이하는 response 확인용 구문들
-                    //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
-                    //println("content : ${j.get("bbsContent")}, created_at : ${j.get("created_at")}")
-                    Log.e("Value", j.toString())
-                    //adapter.data = boardData // 데이터를 삽입
-                }
-                adapter.data.addAll(boardData)
-                adapter.notifyDataSetChanged()
-                adapter.data = boardData
-                Log.e("check", "check")
-            }, Response.ErrorListener { error ->
-                Log.e("ERROR", "@@@@ + ${error.toString()}")
-            }) {
-        }
-        val queue = Volley.newRequestQueue(applicationContext)
-        queue.add(request)
+//        val request = object : StringRequest(Method.GET, serverString,
+//            Response.Listener { response ->
+//                val jsonArray =
+//                    JSONArray(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
+//                bbsSize = jsonArray.length()
+//                for (i in 0 until jsonArray.length()) {
+//                    val j = jsonArray.getJSONObject(i)
+//
+////                    if(j.get("bbstTitle").toString().isEmpty()){
+////                        continue
+////                    }
+//
+//                    boardData.add(
+//                        ShowQuestionData(
+//                            j.get("bbsTitle").toString(),
+//                            j.get("bbsContent").toString(),
+//                            j.get("created_at").toString(),
+//                            j.get("boarder").toString()
+//                        )
+//                    )
+//                    //boardData.addAll()
+//                    //이하는 response 확인용 구문들
+//                    //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
+//                    //println("content : ${j.get("bbsContent")}, created_at : ${j.get("created_at")}")
+//                    Log.e("Value", j.toString())
+//                    //adapter.data = boardData // 데이터를 삽입
+//                }
+//                adapter.data.addAll(boardData)
+//                adapter.notifyDataSetChanged()
+//                adapter.data = boardData
+//                Log.e("check", "check")
+//            }, Response.ErrorListener { error ->
+//                Log.e("ERROR", "@@@@ + ${error.toString()}")
+//            }) {
+//        }
+//        val queue = Volley.newRequestQueue(applicationContext)
+//        queue.add(request)
         //adapter.data = boardData
         //adapter.data.addAll(boardData) // 데이터를 삽입
 
         Handler(Looper.getMainLooper()).postDelayed({
+            //boardData.add(ShowQuestionData("title", "아아 ```helloworld```입니다. 이거는 **bold**확인해보는 것입니다.", "time", "writer", "#java"))
+
             adapter.data = boardData // 데이터를 삽입
             adapter.notifyDataSetChanged()
             binding.mainProgressbar.visibility = View.GONE
@@ -161,11 +176,24 @@ class MainActivity : AppCompatActivity() {
             binding.refreshButton.animate().rotation(binding.refreshButton.rotation + 720)
                 .setDuration(500).start() // 버튼 클릭 시, 0.5초 동안 두 번 회전해서, 새로고침 했다는 것을 알려준다.
 
-            for(i in buttonClicked){
-                if(i.value){
-                    println(i.key)
-                }
-            }//TODO 여기에서 선택 된 것들을 가지고 서버에서 분류해서 게시물 가져오기
+            //TODO 이 부분 라우터 하나 받아서 검색하는 식으로 다시 하기로 했음
+//            var newBoardList = mutableListOf<ShowQuestionData>()
+//
+//            for (i in boardData) {
+//                if (i.hashtag.isNotEmpty()) { // 게시물에 해시태그가 있다면
+//                    val hashTagList = i.hashtag.split("#")
+//                    for(j in 1 until hashTagList.size){
+//                        Log.e("확인", hashTagList[j])
+//                        if (buttonClicked[hashTagList[j]]!!) { // 사용자가 선택한 해시태그와, 게시물의 해시태그가 하나라도 일치하면 추가
+//                            newBoardList.add(i)
+//                            break // 중복으로 더 들어갈 수 있으므로 바로 탈출
+//                        }
+//                    }
+//                }
+//            }
+//            adapter.data.clear()
+//            adapter.data = newBoardList
+//            adapter.notifyDataSetChanged()
 
         }
 
@@ -303,21 +331,22 @@ class MainActivity : AppCompatActivity() {
             if (sharedPreferences.getBoolean("isLogin", false)) { // TODO 원래 false여야 한다.
                 if (!isFabOpen) { // 게시글 쓰는 창이 지금 화면에 나오고 있는 상태면
 
-                    binding.postContent.hint = " ■ 코드를 입력하시려면 아래와 같이 코드 앞과 뒤에 ```를 표시해주세요.\n ```\n printf(\"hello world\");\n ```\n\n ■ 글씨를 진하게 하시려면" +
-                            "아래와 같이 문자 앞과 뒤에 **를 표시해주세요.\n **대한민국**"
+                    binding.postContent.hint =
+                        " ■ 코드를 입력하시려면 아래와 같이 코드 앞과 뒤에 ```를 표시해주세요.\n ```\n printf(\"hello world\");\n ```\n\n ■ 글씨를 진하게 하시려면" +
+                                "아래와 같이 문자 앞과 뒤에 **를 표시해주세요.\n **대한민국**"
 
                     //추천 해시태그 목록
                     val multiAutoTextStrings = arrayOf(
-                        "#C",
-                        "#C++",
-                        "#Java",
-                        "#Algorithm",
-                        "#Python",
-                        "#Server",
-                        "#Web",
-                        "#Mobile",
-                        "#IOT",
-                        "#ETC"
+                        "#c",
+                        "#c++",
+                        "#java",
+                        "#algorithm",
+                        "#python",
+                        "#server",
+                        "#web",
+                        "#mobile",
+                        "#iot",
+                        "#etc"
                     )
                     // edittext자동완성시켜주는 부분
                     val multiAutoTextAdapter = ArrayAdapter(
@@ -362,41 +391,51 @@ class MainActivity : AppCompatActivity() {
                     binding.sendButton.setOnClickListener {
                         val hashtagStr = multiAutoTextView.text
                         var commaCnt = 0
-                        for(i in hashtagStr){
-                            if(i==','){
+                        for (i in hashtagStr) {
+                            if (i == ',') {
                                 commaCnt++
                             }
                         }
 
-                        if(commaCnt<=2){
-                            val requestSendBoard = object : StringRequest(Method.POST, postBoardServerString,
-                                Response.Listener { response ->
-                                    //val jsonArray =
-//                                        JSONObject(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
-                                    //bbsSize = jsonArray.length()
-                                }, Response.ErrorListener { error ->
-                                    Log.e("ERROR", error.toString())
-                                }) {
+                        var sendBoardState = ""
 
-                                override fun getParams(): Map<String, String> {
-                                    val params: MutableMap<String, String> = HashMap()
-                                    params["bbsTitle"] = binding.postTitle.text.toString()
-                                    params["bbsContent"] = binding.postContent.text.toString()
-                                    val hashtag = binding.autoCompleteTag.text.toString()
-                                    var finalHashtagStr = ""
-                                    for(i in hashtag){
-                                        if(i == ',' || i == ' '){
-                                            continue
-                                        }else{
-                                            finalHashtagStr.plus(i)
-                                        }
-                                    }
-                                    //params["hashTagContent"] = finalHashtagStr
-                                    params["hashTagContent"] = "#JAVA"
-                                    return params
-                                }
+                        /**
+                         * 해시태그 중복 검사하는 부분입니다.
+                         * 해시태그가 중복되면 서버로 보내지 않습니다.
+                         * */
+                        var hashTagDuplicates = false // 해시태그 중복이 있는지 확인한다. 중복이 있으면 true로 바꾼다.
+                        val hashTags = binding.autoCompleteTag.text.split(", ")
+                        for(hashTag in hashTags){
+                            if(hashTags.count{it==hashTag} >= 2){
+                                Toast.makeText(applicationContext, "해시태그가 중복됩니다.", Toast.LENGTH_SHORT).show()
+                                hashTagDuplicates = true // 중복이 있으므로 true로 바꾼다.
                             }
-                            requestSendBoard.retryPolicy = object:RetryPolicy{
+                        }
+
+                        if (commaCnt <= 2 && !hashTagDuplicates) {
+                            val requestSendBoard =
+                                object : StringRequest(Method.POST, postBoardServerString,
+                                    Response.Listener { response ->
+                                        val jsonObject =
+                                            JSONObject(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
+                                        sendBoardState = jsonObject.getString("state")
+                                        Log.e("sendBoardState", sendBoardState)
+                                    }, Response.ErrorListener { error ->
+                                        Log.e("ERROR", error.toString())
+                                    }) {
+                                    override fun getParams(): Map<String, String> {
+                                        val params: MutableMap<String, String> = HashMap()
+                                        params["bbsTitle"] = binding.postTitle.text.toString()
+                                        params["bbsContent"] = binding.postContent.text.toString()
+
+
+
+
+                                        params["hashTagContent"] = binding.autoCompleteTag.text.toString().replace(", ","")
+                                        return params
+                                    }
+                                }
+                            requestSendBoard.retryPolicy = object : RetryPolicy {
                                 override fun retry(error: VolleyError?) {
 
                                 }
@@ -412,7 +451,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             val postQueue = Volley.newRequestQueue(this)
                             postQueue.add(requestSendBoard)
-                        }else if(commaCnt>2){
+                        } else if (commaCnt > 2) {
                             Toast.makeText(this, "해시태그는 최대 세개입니다.", Toast.LENGTH_SHORT).show()
                         }
 
@@ -434,6 +473,14 @@ class MainActivity : AppCompatActivity() {
 //                        }
 //                        val postQueue = Volley.newRequestQueue(this)
 //                        postQueue.add(request)
+
+                        if(sendBoardState == "boardSuccess"){
+                                // boardSuccess가 나오면 게시글 전송이 잘 되었다는 것이므로
+                                // 다시 창을 닫아줍니다.
+                            showReveal()
+                            println("들어옴.")
+                        }
+
                     }
                 }
                 showReveal()
@@ -631,12 +678,13 @@ class MainActivity : AppCompatActivity() {
                                 j.get("bbsTitle").toString(),
                                 j.get("bbsContent").toString(),
                                 j.get("createdAt").toString(),
-                                j.get("boarder").toString()
+                                j.get("boarder").toString(),
+                                j.get("hashTagContent").toString()
                             )
                         )
-                        println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
-                        println("content : ${j.get("bbsContent")}, createdAt : ${j.get("createdAt")}")
-                        Log.e("Value", j.toString())
+                        //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
+                        //println("content : ${j.get("bbsContent")}, createdAt : ${j.get("createdAt")}")
+                        //Log.e("Value", j.toString())
                     }
                     //println("@@@### true")
                     it.resume(true)
