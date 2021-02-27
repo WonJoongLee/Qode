@@ -5,7 +5,13 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Looper
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +33,7 @@ import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class QuestionTitleAdapter(private val context: Context, private val idArr : MutableList<Int>) :
+class QuestionTitleAdapter(private val context: Context, private val idArr: MutableList<Int>) :
 
     RecyclerView.Adapter<QuestionTitleViewHolder>() {
 
@@ -78,7 +84,10 @@ class QuestionTitleAdapter(private val context: Context, private val idArr : Mut
                 ) // 첫 번째 parameter는 넘겨줄 이름, 두 번째 parameter는 data에 저장된 key로 접근해서 실제 value가져옴
                 intent.putExtra("boardNum", (data["boardNum"]!!.toInt()).toString())
                 intent.putExtra("answerId", data["answerId"])
-                if(answerDataList.isNotEmpty()) intent.putParcelableArrayListExtra("answerData", answerDataList) // 답변들 넘겨주는 부분
+                if (answerDataList.isNotEmpty()) intent.putParcelableArrayListExtra(
+                    "answerData",
+                    answerDataList
+                ) // 답변들 넘겨주는 부분
                 startActivity(holder.itemView.context, intent, null) // 새로운 activity로 이동
                 answerDataList.clear() // clear를 안해주면 계속 남아 있다.
             }
@@ -132,13 +141,132 @@ class QuestionTitleAdapter(private val context: Context, private val idArr : Mut
 class QuestionTitleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
     private val tvContent = itemView.findViewById<TextView>(R.id.tvContent)
+    private val tag1 = itemView.findViewById<TextView>(R.id.tag1)
+    private val tag2 = itemView.findViewById<TextView>(R.id.tag2)
+    private val tag3 = itemView.findViewById<TextView>(R.id.tag3)
+    private val uploadDate = itemView.findViewById<TextView>(R.id.uploadDate)
 
     fun bind(showQuestionData: ShowQuestionData) {
         tvTitle.text = showQuestionData.tvTitle
-        tvContent.text = showQuestionData.tvContent
-        itemView.setOnClickListener {
-            Toast.makeText(it.context, "Title is $tvTitle", Toast.LENGTH_SHORT).show()
-        }
+        uploadDate.text = showQuestionData.tvTime
 
+        val targetStr = showQuestionData.tvContent
+        val changeText = SpannableStringBuilder(targetStr)
+        val graveArr = mutableListOf<Int>()
+        val boldArr = mutableListOf<Int>()
+        var graveCnt = 0
+        var boldCnt = 0
+
+        if (targetStr != null && targetStr.length >= 3) {
+            for (i in 0..targetStr.length - 2) {
+
+                if (i <= targetStr.length - 6 && targetStr[i] == '`' && targetStr[i + 1] == '`' && targetStr[i + 2] == '`' && !graveArr.contains(
+                        i
+                    )
+                ) { // 연속으로 세 개(```) 나왔다면, 여는 부분
+                    // i가 length-6이하여야 하는 이유는 length-6이여야 j+2까지 해서 targetStr에 접근할 수 있기 때문이다.
+                    for (j in i + 3 until targetStr.length) {
+                        if (targetStr[j] == '`' && targetStr[j + 1] == '`' && targetStr[j + 2] == '`') { // 연속으로 세 개(```) 닫는 부분이 나왔다면,
+                            graveCnt += 2
+                            graveArr.add(i)
+                            graveArr.add(j) // 뒤에 배경이 들어가게 처리된 부분에서 `를 지우기 위해 `인 부분을 한 쌍씩 넣는다.
+                            println("$$$ i : $i, j : $j")
+                            for (k in i + 3 until j) {
+                                changeText.setSpan(
+                                    BackgroundColorSpan(Color.parseColor("#DEDEDE")),
+                                    k,
+                                    k + 1,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                ) // i부터 j-1까지 배경을 핑크색으로 바꾼다. (코드 배경)
+                            }
+                            break
+                        }
+                    }
+
+                }
+
+                if (i <= targetStr.length - 2 && targetStr[i] == '*' && targetStr[i + 1] == '*' && !boldArr.contains(
+                        i
+                    )
+                ) { // 연속으로 두 개(**) 나왔다면, 여는 부분
+                    for (j in i + 2..targetStr.length - 2) {
+                        if (targetStr[j] == '*' && targetStr[j + 1] == '*') { // 연속으로 세 개(**) 나왔다면, 닫는 부분
+                            boldCnt += 2
+                            boldArr.add(i)
+                            boldArr.add(j) // bold 처리된 부분에서 *를 지우기 위해 *인 부분을 한 쌍씩 넣는다.
+                            for (k in i + 2 until j) {
+                                changeText.setSpan(
+                                    StyleSpan(Typeface.BOLD),
+                                    k,
+                                    k + 1,
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                ) // i부터 j-1까지 글씨체를 진하게(bold) 바꾼다.
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+
+            for (i in 0 until changeText.length - (graveCnt * 3) - (boldCnt * 2)) {
+                if (changeText[i] == '`' && changeText[i + 1] == '`' && changeText[i + 2] == '`') {
+                    changeText.replace(i, i + 3, "")
+                }
+                if (changeText[i] == '*' && changeText[i + 1] == '*') {
+                    changeText.replace(i, i + 2, "")
+                }
+            }
+            if (changeText[changeText.length - 1] == '`' && changeText[changeText.length - 2] == '`' && changeText[changeText.length - 3] == '`') {
+                changeText.replace(changeText.length - 3, changeText.length, "")
+            }
+            if (changeText[changeText.length - 1] == '*' && changeText[changeText.length - 2] == '*') {
+                changeText.replace(changeText.length - 2, changeText.length, "")
+            }
+
+
+            tvContent.text = changeText
+            itemView.setOnClickListener {
+                Toast.makeText(it.context, "Title is $tvTitle", Toast.LENGTH_SHORT).show()
+            }
+            val serverHashTagStr = showQuestionData.hashtag
+            val tags = mutableListOf<String>()
+            for (i in serverHashTagStr.split("#")) {
+                if (i.isNotEmpty()) {
+                    tags.add(i)
+                }
+            }
+            var tagCnt = 1
+            for (tag in tags) {
+                when (tagCnt) {
+                    1 -> {
+                        tag1.text = "#".plus(tag)
+                        tagCnt++
+                    }
+                    2 -> {
+                        tag2.text = "#".plus(tag)
+                        tagCnt++
+                    }
+                    3 -> {
+                        tag3.text = "#".plus(tag)
+                    }
+                }
+            }
+            when (tagCnt) {
+                1 -> {
+                    tag1.text = ""
+                    tag2.text = ""
+                    tag3.text = ""
+                }
+                2 -> {
+                    tag2.text = ""
+                    tag3.text = ""
+                }
+                3 -> {
+                    tag3.text = ""
+                }
+            }
+            tagCnt = 1 // 다시 tagCnt를 1로 초기화
+            tags.clear()
+        }
     }
 }

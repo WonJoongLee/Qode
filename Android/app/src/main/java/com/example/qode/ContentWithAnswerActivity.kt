@@ -6,8 +6,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -29,6 +27,7 @@ import com.example.qode.recyclerview.AnswerAdapter
 import com.example.qode.recyclerview.AnswerData
 import com.example.qode.recyclerview.CommentData
 import com.example.qode.recyclerview.ShowQuestionData
+import kotlinx.android.synthetic.main.activity_content_with_answer.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
@@ -49,6 +48,7 @@ class ContentWithAnswerActivity : AppCompatActivity() {
         val userid = getSharedPreferences("sharedPrefs", MODE_PRIVATE).getString("userid", null)
         var lastClick = "answer"
         val answerList = intent.getParcelableArrayListExtra<AnswerData>("answerData")
+        val hashTags = intent.getStringExtra("hashtag").toString()
 
 
         // lastClick변수는 사용자가 댓글을 어디다 달 지 알기 위해서다.
@@ -56,16 +56,69 @@ class ContentWithAnswerActivity : AppCompatActivity() {
         // comment1~n이라면 n번째 comment에 댓글을 다는 것이다.
         binding = DataBindingUtil.setContentView(this, R.layout.activity_content_with_answer)
 
-        var answerStr = intent.getStringExtra("content")
-        var changeText: Spannable = SpannableStringBuilder(answerStr)
 
-        //TODO 좀더 수정작업이 필요할 것 같다. 제대로 색이 안변하고 앞에 ```이거부터 변한다. 끝 ```이거는 안변한다.
+        val tags = mutableListOf<String>()
+        for (i in hashTags.split("#")) {
+            if (i.isNotEmpty()) {
+                tags.add(i)
+            }
+        }
+        var tagCnt = 1
+        for (tag in tags) {
+            when (tagCnt) {
+                1 -> {
+                    binding.contentWithAnswerTag1.text = "#".plus(tag)
+                    tagCnt++
+                }
+                2 -> {
+                    binding.contentWithAnswerTag2.text = "#".plus(tag)
+                    tagCnt++
+                }
+                3 -> {
+                    binding.contentWithAnswerTag3.text = "#".plus(tag)
+                    tagCnt++ // 다시 tagCnt를 1로 초기화
+                }
+            }
+        }
+
+        when (tagCnt) { // 태그가 없으면 Visibility를 GONE으로 바꿔준다.
+            1 -> {
+                binding.contentWithAnswerTag1.visibility = View.GONE
+                binding.contentWithAnswerTag2.visibility = View.GONE
+                binding.contentWithAnswerTag3.visibility = View.GONE
+            }
+            2 -> {
+                binding.contentWithAnswerTag2.visibility = View.GONE
+                binding.contentWithAnswerTag3.visibility = View.GONE
+            }
+            3 -> {
+                binding.contentWithAnswerTag3.visibility = View.GONE
+            }
+        }
+
+        //여기서부터 bold설정과 배경 넣는 설정
+        var answerStr = intent.getStringExtra("content")
+        val changeText = SpannableStringBuilder(answerStr)
+        val graveArr = mutableListOf<Int>()
+        val boldArr = mutableListOf<Int>()
+        var graveCnt = 0
+        var boldCnt = 0
+
         if (answerStr != null && answerStr.length >= 3) {
             for (i in 0..answerStr.length - 2) {
-                if (i <= answerStr.length - 6 && answerStr[i] == '`' && answerStr[i + 1] == '`' && answerStr[i + 2] == '`') { // 연속으로 세 개(```) 나왔다면, 여는 부분
+
+                if (i <= answerStr.length - 6 && answerStr[i] == '`' && answerStr[i + 1] == '`' && answerStr[i + 2] == '`' && !graveArr.contains(
+                        i
+                    )
+                ) { // 연속으로 세 개(```) 나왔다면, 여는 부분
                     // i가 length-6이하여야 하는 이유는 length-6이여야 j+2까지 해서 answerStr에 접근할 수 있기 때문이다.
-                    for (j in i + 3..answerStr.length - 3) {
-                        if (answerStr[j] == '`' && answerStr[j + 1] == '`' && answerStr[j + 2] == '`') { // 연속으로 세 개(```) 나왔다면, 닫는 부분
+                    for (j in i + 3 until answerStr.length) {
+                        if (answerStr[j] == '`' && answerStr[j + 1] == '`' && answerStr[j + 2] == '`') { // 연속으로 세 개(```) 닫는 부분이 나왔다면,
+                            graveCnt += 2
+                            graveArr.add(i)
+                            //graveArr.add(j - 3) // 뒤에 배경이 들어가게 처리된 부분에서 `를 지우기 위해 `인 부분을 한 쌍씩 넣는다.
+                            graveArr.add(j) // 뒤에 배경이 들어가게 처리된 부분에서 `를 지우기 위해 `인 부분을 한 쌍씩 넣는다.
+                            println("$$$ i : $i, j : $j")
                             for (k in i + 3 until j) {
                                 changeText.setSpan(
                                     BackgroundColorSpan(Color.parseColor("#fbe4e4")),
@@ -74,14 +127,21 @@ class ContentWithAnswerActivity : AppCompatActivity() {
                                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                 ) // i부터 j-1까지 배경을 핑크색으로 바꾼다. (코드 배경)
                             }
+                            break
                         }
                     }
 
                 }
 
-                if (i <= answerStr.length - 4 && answerStr[i] == '*' && answerStr[i + 1] == '*') { // 연속으로 두 개(**) 나왔다면, 여는 부분
+                if (i <= answerStr.length - 2 && answerStr[i] == '*' && answerStr[i + 1] == '*' && !boldArr.contains(
+                        i
+                    )
+                ) { // 연속으로 두 개(**) 나왔다면, 여는 부분
                     for (j in i + 2..answerStr.length - 2) {
                         if (answerStr[j] == '*' && answerStr[j + 1] == '*') { // 연속으로 세 개(**) 나왔다면, 닫는 부분
+                            boldCnt += 2
+                            boldArr.add(i)
+                            boldArr.add(j) // bold 처리된 부분에서 *를 지우기 위해 *인 부분을 한 쌍씩 넣는다.
                             for (k in i + 2 until j) {
                                 changeText.setSpan(
                                     StyleSpan(Typeface.BOLD),
@@ -90,52 +150,33 @@ class ContentWithAnswerActivity : AppCompatActivity() {
                                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                 ) // i부터 j-1까지 글씨체를 진하게(bold) 바꾼다.
                             }
+                            break
                         }
                     }
                 }
             }
-            //TODO 여기 graveAccent빼는 것부터 하기 0226
-            val graveAccent = Regex("```")
-            //val star = Regex("**")
-            changeText = graveAccent.replace(changeText, "").toSpannable()
-//            changeText = changeText.replace("```".toRegex()){ it.value->"" }.toSpannable()
-//            changeText = changeText.replace("**", "")
 
-//            for (i in 0..changeText.length - 2) {
-//                if (i <= changeText.length - 6 && changeText[i] == '`' && changeText[i + 1] == '`' && changeText[i + 2] == '`') { // 연속으로 세 개(```) 나왔다면, 여는 부분
-//                    // i가 length-6이하여야 하는 이유는 length-6이여야 j+2까지 해서 answerStr에 접근할 수 있기 때문이다.
-//                    for (j in i + 3..changeText.length - 3) {
-//                        if (changeText[j] == '`' && changeText[j + 1] == '`' && changeText[j + 2] == '`') { // 연속으로 세 개(```) 나왔다면, 닫는 부분
-//                            for (k in j..j + 2) {
-//
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                if (i <= answerStr.length - 4 && answerStr[i] == '*' && answerStr[i + 1] == '*') { // 연속으로 두 개(**) 나왔다면, 여는 부분
-//                    for (j in i + 2..answerStr.length - 2) {
-//                        if (answerStr[j] == '*' && answerStr[j + 1] == '*') { // 연속으로 세 개(**) 나왔다면, 닫는 부분
-//                            for (k in i + 2 until j) {
-//                                changeText.setSpan(
-//                                    StyleSpan(Typeface.BOLD),
-//                                    k,
-//                                    k + 1,
-//                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-//                                ) // i부터 j-1까지 글씨체를 진하게(bold) 바꾼다.
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            println("graveCnt : ${graveCnt}, boldCnt : ${boldCnt} ,total length ${changeText.length - (graveCnt * 3) - (boldCnt * 2)}")
+            for (i in 0 until changeText.length - (graveCnt * 3) - (boldCnt * 2)) {
+                if (changeText[i] == '`' && changeText[i + 1] == '`' && changeText[i + 2] == '`') {
+                    println("i : $i @@@")
+                    changeText.replace(i, i + 3, "")
+                }
+                if (changeText[i] == '*' && changeText[i + 1] == '*') {
+                    println("i : $i @@@")
+                    changeText.replace(i, i + 2, "")
+                }
+            }
+            if(changeText[changeText.length-1] == '`' && changeText[changeText.length-2] == '`' && changeText[changeText.length-3] == '`'){
+                changeText.replace(changeText.length-3, changeText.length, "")
+            }
+            if(changeText[changeText.length-1] == '*' && changeText[changeText.length-2] == '*'){
+                changeText.replace(changeText.length-2, changeText.length, "")
+            }
 
-
-//            answerStr = answerStr.replace("```", "")
-//            answerStr = answerStr.replace("**", "") // 마지막으로 ```와 **를 제거해준다.
         }
 
         binding.title.text = intent.getStringExtra("title")
-        //binding.content.text = intent.getStringExtra("content")
         binding.content.text = changeText
         binding.createdTime.text = intent.getStringExtra("createdTime")
         binding.recoCnt.text = intent.getStringExtra("recoCnt")
@@ -150,7 +191,7 @@ class ContentWithAnswerActivity : AppCompatActivity() {
                 answerDataList.add(
                     AnswerData(
                         answerList[i].answer,
-                        answerList[i].writer,
+                        answerList[i].answerWriter,
                         answerList[i].comment,
                         answerList[i].recoCnt,
                         answerList[i].answerId
@@ -310,8 +351,15 @@ class ContentWithAnswerActivity : AppCompatActivity() {
                                         var comment = jsonArray.getJSONObject(i)
                                         commentData.add(
                                             CommentData(
-                                                comment.get("commentContent").toString()
+                                                comment.get("commentContent").toString(),
+                                                comment.get("answerCommenter").toString()
                                             )
+                                        )
+                                        println("commentServerString : ${commentServerString}")
+                                        println(
+                                            "writer : ${
+                                                comment.get("answerCommenter").toString()
+                                            }"
                                         )
                                     }
                                     it.resume(commentData)
@@ -495,7 +543,8 @@ class ContentWithAnswerActivity : AppCompatActivity() {
                                     var comment = jsonArray.getJSONObject(i)
                                     commentData.add(
                                         CommentData(
-                                            comment.get("commentContent").toString()
+                                            comment.get("commentContent").toString(),
+                                            comment.get("answerCommenter").toString()
                                         )
                                     )
                                 }

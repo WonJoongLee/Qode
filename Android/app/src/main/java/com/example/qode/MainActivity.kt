@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         Log.e("Nickname", sharedPreferences.getString("nickname", "").toString())
 
         editor.apply {
-            putString("serverUrl", "http://6403e44b29f7.ngrok.io/") // server Url 추가
+            putString("serverUrl", "http://017595faff79.ngrok.io/") // server Url 추가
         }.apply()
 
         val serverString = sharedPreferences.getString("serverUrl", null)
@@ -429,6 +429,12 @@ class MainActivity : AppCompatActivity() {
                                             JSONObject(response) //  JSONObject가 아니라 array로 바로 오므로 JSONArray로 받아야함
                                         sendBoardState = jsonObject.getString("state")
                                         Log.e("sendBoardState", sendBoardState)
+                                        if(sendBoardState == "boardSuccess"){
+                                            binding.postContent.text.clear()
+                                            binding.postTitle.text.clear()
+                                            binding.autoCompleteTag.text.clear() // boardSuccess가 나와서 DB 전송이 성공적으로 완료되면 edittext의 값들을 모두 비워주고
+                                            showReveal() // 창을 닫는다.
+                                        }
                                     }, Response.ErrorListener { error ->
                                         Log.e("ERROR", error.toString())
                                     }) {
@@ -436,11 +442,8 @@ class MainActivity : AppCompatActivity() {
                                         val params: MutableMap<String, String> = HashMap()
                                         params["bbsTitle"] = binding.postTitle.text.toString()
                                         params["bbsContent"] = binding.postContent.text.toString()
-
-
-
-
                                         params["hashTagContent"] = binding.autoCompleteTag.text.toString().replace(", ","")
+                                        Log.e("hashtag", binding.autoCompleteTag.text.toString().replace(", ",""))
                                         return params
                                     }
                                 }
@@ -692,11 +695,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                         idArr.add(j.get("id").toString().toInt())
-                        //println("title : ${j.get("bbsTitle")}, boarder : ${j.get("boarder")}")
-                        //println("content : ${j.get("bbsContent")}, createdAt : ${j.get("createdAt")}")
-                        //Log.e("Value", j.toString())
                     }
-                    //println("@@@### true")
                     it.resume(true)
                 }, Response.ErrorListener { error ->
                     Log.e("ERROR", error.toString())
